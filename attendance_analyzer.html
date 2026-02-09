@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محلل تقارير الحضور</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800&family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&display=swap');
         
         :root {
-            --primary: #1a4d7a;
-            --primary-dark: #0f3654;
-            --secondary: #2ecc71;
-            --accent: #e74c3c;
-            --bg-main: #f8f9fa;
+            --primary: #6B7FD7;
+            --primary-dark: #5a6bc4;
+            --secondary: #4ecca3;
+            --accent: #e76f6f;
+            --bg-main: #f7f8fa;
             --bg-card: #ffffff;
-            --text-primary: #2c3e50;
-            --text-secondary: #7f8c8d;
-            --border: #e1e8ed;
-            --shadow: rgba(0, 0, 0, 0.08);
-            --shadow-hover: rgba(0, 0, 0, 0.15);
+            --text-primary: #3d4e61;
+            --text-secondary: #6b7c8f;
+            --border: #e5e9f0;
+            --shadow: rgba(0, 0, 0, 0.06);
+            --shadow-hover: rgba(0, 0, 0, 0.12);
         }
         
         * {
@@ -28,31 +28,57 @@
         }
         
         body {
-            font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #6B7FD7 0%, #8B7EC8 100%);
             min-height: 100vh;
             padding: 2rem;
             color: var(--text-primary);
-            transition: background 0.3s ease;
+            transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            pointer-events: none;
+            animation: shimmer 20s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
         
         body.dark-mode {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            --bg-main: #1a202c;
-            --bg-card: #2d3748;
-            --text-primary: #e2e8f0;
-            --text-secondary: #a0aec0;
-            --border: #4a5568;
-            --shadow: rgba(0, 0, 0, 0.3);
-            --shadow-hover: rgba(0, 0, 0, 0.5);
+            background: linear-gradient(135deg, #1e2846 0%, #2d3561 50%, #343a5e 100%);
+            --bg-main: #1e2532;
+            --bg-card: #2a3445;
+            --text-primary: #d1dae5;
+            --text-secondary: #8f9db0;
+            --border: #3d4a5e;
+            --shadow: rgba(0, 0, 0, 0.25);
+            --shadow-hover: rgba(0, 0, 0, 0.4);
+        }
+        
+        body.dark-mode::before {
+            background: radial-gradient(circle at 20% 30%, rgba(107, 127, 215, 0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(139, 126, 200, 0.04) 0%, transparent 50%);
         }
         
         .dark-mode-toggle {
             position: fixed;
             top: 2rem;
             left: 2rem;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
             color: white;
             width: 60px;
             height: 60px;
@@ -62,27 +88,35 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(15px);
             z-index: 1000;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
         
         .dark-mode-toggle:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.18);
+            transform: scale(1.08) rotate(90deg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+        
+        .dark-mode-toggle:active {
+            transform: scale(0.98) rotate(90deg);
         }
         
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            animation: fadeIn 0.6s ease-out;
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
         }
         
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(25px);
             }
             to {
                 opacity: 1;
@@ -93,7 +127,7 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
-            animation: slideDown 0.8s ease-out;
+            animation: slideDown 1s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
         
@@ -101,28 +135,28 @@
             position: absolute;
             top: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.12);
             color: white;
-            padding: 0.8rem 1.5rem;
+            padding: 0.75rem 1.4rem;
             border-radius: 12px;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(15px);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
         }
         
         .back-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateX(3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
         @keyframes slideDown {
             from {
                 opacity: 0;
-                transform: translateY(-30px);
+                transform: translateY(-35px);
             }
             to {
                 opacity: 1;
@@ -131,33 +165,37 @@
         }
         
         h1 {
-            font-family: 'Cairo', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: white;
-            text-shadow: 2px 4px 20px rgba(0, 0, 0, 0.3);
-            margin-bottom: 0.5rem;
-            letter-spacing: -1px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.98);
+            text-shadow: 0 3px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.3px;
         }
         
         .subtitle {
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 1.2rem;
-            font-weight: 500;
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 1.15rem;
+            font-weight: 300;
         }
         
         .main-card {
-            background: var(--bg-card);
-            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(15px);
+            border-radius: 22px;
             padding: 2.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 12px 40px var(--shadow);
             margin-bottom: 2rem;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            z-index: 1;
         }
         
         .main-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 50px var(--shadow-hover);
         }
         
         .input-section {
@@ -200,27 +238,26 @@
         
         button {
             flex: 1;
-            padding: 1.2rem 2rem;
-            font-family: 'Cairo', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
+            padding: 1.1rem 2rem;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.2px;
         }
         
         .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
-            box-shadow: 0 8px 20px rgba(26, 77, 122, 0.3);
+            box-shadow: 0 6px 18px rgba(107, 127, 215, 0.25);
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(26, 77, 122, 0.4);
+            box-shadow: 0 10px 25px rgba(107, 127, 215, 0.35);
         }
         
         .btn-primary:active {
@@ -230,7 +267,7 @@
         .btn-secondary {
             background: white;
             color: var(--primary);
-            border: 3px solid var(--primary);
+            border: 2px solid var(--primary);
         }
         
         .btn-secondary:hover {
