@@ -76,6 +76,7 @@
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
+            align-items: stretch;
         }
         
         .app-card {
@@ -89,7 +90,9 @@
             cursor: pointer;
             text-decoration: none;
             color: inherit;
-            display: block;
+            display: flex;
+            flex-direction: column;
+            min-height: 550px;
         }
         
         .app-card::before {
@@ -147,6 +150,7 @@
         .app-features {
             list-style: none;
             margin-bottom: 1.5rem;
+            flex-grow: 1;
         }
         
         .app-features li {
@@ -180,6 +184,7 @@
             text-align: center;
             text-decoration: none;
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            margin-top: auto;
         }
         
         .app-button:hover {
