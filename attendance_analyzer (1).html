@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محلل تقارير الحضور</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap');
+        
+        :root {
+            --primary: #1a4d7a;
+            --primary-dark: #0f3654;
+            --secondary: #2ecc71;
+            --accent: #e74c3c;
+            --bg-main: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border: #e1e8ed;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --shadow-hover: rgba(0, 0, 0, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--text-primary);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease-out;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 2px 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .main-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .main-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+        }
+        
+        .input-section {
+            margin-bottom: 2rem;
+        }
+        
+        label {
+            display: block;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-dark);
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 1.5rem;
+            border: 3px solid var(--border);
+            border-radius: 16px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(26, 77, 122, 0.1);
+        }
+        
+        .btn-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        button {
+            flex: 1;
+            padding: 1.2rem 2rem;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(26, 77, 122, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(26, 77, 122, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 3px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .results-section {
+            display: none;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .results-section.show {
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            padding: 1.8rem;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: var(--primary);
+            opacity: 0.05;
+            border-radius: 0 0 0 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 30px var(--shadow-hover);
+        }
+        
+        .stat-card:hover::before {
+            opacity: 0.1;
+            width: 150px;
+            height: 150px;
+        }
+        
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .stat-value {
+            font-family: 'Cairo', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+        
+        .stat-unit {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-right: 0.3rem;
+        }
+        
+        .details-table {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            font-weight: 700;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s ease;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        tbody td {
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        tbody td.time-cell {
+            direction: ltr;
+            text-align: center;
+        }
+        
+        .day-type {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .type-regular { background: #e8f5e9; color: #2e7d32; }
+        .type-weekend { background: #f3e5f5; color: #7b1fa2; }
+        .type-vacation { background: #fff3e0; color: #e65100; }
+        .type-wfh { background: #e3f2fd; color: #1565c0; }
+        .type-site { background: #fce4ec; color: #c2185b; }
+        .type-holiday { background: #f1f8e9; color: #558b2f; }
+        
+        .error-message {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            font-weight: 600;
+            text-align: center;
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(26, 77, 122, 0.1);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            h1 { font-size: 2.5rem; }
+            .main-card { padding: 1.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .btn-container { flex-direction: column; }
+            
+            .back-button {
+                position: static;
+                display: inline-block;
+                margin-bottom: 1rem;
+                font-size: 0.9rem;
+                padding: 0.6rem 1.2rem;
+            }
+            
+            header {
+                padding-top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-button">← الصفحة الرئيسية</a>
+            <h1>📊 محلل تقارير الحضور</h1>
+            <p class="subtitle">الصق تقرير الحضور وسيتم تحليله تلقائياً</p>
+        </header>
+        
+        <div class="main-card">
+            <div class="input-section">
+                <label for="reportText">الصق تقرير الحضور هنا:</label>
+                <textarea 
+                    id="reportText" 
+                    placeholder="الصق نص تقرير الحضور الكامل هنا...
+
+مثال: Attendance Report January,2026
+Employee Name Mohammad Mofreh Mahfouz Alrashidi
+..."></textarea>
+                
+                <div class="btn-container">
+                    <button class="btn-primary" onclick="analyzeReport()">🔍 تحليل التقرير</button>
+                    <button class="btn-secondary" onclick="clearReport()">🗑️ مسح</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results-section" id="results">
+            <div class="main-card">
+                <div class="table-header">📈 الملخص الإحصائي</div>
+                <div class="stats-grid" id="statsGrid"></div>
+            </div>
+            
+            <div class="main-card">
+                <div class="details-table">
+                    <div class="table-header">📅 تفاصيل الحضور اليومي</div>
+                    <div id="detailsTable"></div>
+                </div>
+            </div>
+            
+            <div class="btn-container">
+                <button class="btn-primary" onclick="downloadExcel()">📥 تحميل Excel</button>
+                <button class="btn-secondary" onclick="printReport()">🖨️ طباعة</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let analysisData = null;
+        
+        function analyzeReport() {
+            const text = document.getElementById('reportText').value.trim();
+            
+            if (!text) {
+                alert('⚠️ الرجاء لصق نص التقرير أولاً');
+                return;
+            }
+            
+            try {
+                const data = parseAttendanceReport(text);
+                analysisData = data;
+                displayResults(data);
+                document.getElementById('results').classList.add('show');
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                alert('❌ حدث خطأ في تحليل التقرير. تأكد من تنسيق التقرير الصحيح.');
+                console.error(error);
+            }
+        }
+        
+        function parseAttendanceReport(text) {
+            // استخراج معلومات الموظف - دعم العربي والإنجليزي
+            const employeeName = text.match(/(?:Employee Name|اسم الموظف)\s*:?\s*([^\n]+)/i)?.[1]?.trim() || 'غير محدد';
+            const employeeId = text.match(/(?:Employee ID|الرقم الوظيفي)\s*:?\s*(\d+)/i)?.[1] || 'غير محدد';
+            const department = text.match(/(?:Department|القطاع|الإدارة)\s*:?\s*([^\n]+)/i)?.[1]?.trim() || 'غير محدد';
+            
+            // استخراج الشهر - دعم العربي والإنجليزي
+            const monthMatch = text.match(/(?:of|Report|تقرير)\s+(January|February|March|April|May|June|July|August|September|October|November|December|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر),?\s*(\d{4})/i);
+            const month = monthMatch ? `${monthMatch[1]} ${monthMatch[2]}` : 'غير محدد';
+            
+            // تحليل الأيام - دعم الأشهر العربية والإنجليزية والأرقام العربية
+            const days = [];
+            const monthNames = {
+                'يناير': 'January', 'فبراير': 'February', 'مارس': 'March', 'أبريل': 'April',
+                'مايو': 'May', 'يونيو': 'June', 'يوليو': 'July', 'أغسطس': 'August',
+                'سبتمبر': 'September', 'أكتوبر': 'October', 'نوفمبر': 'November', 'ديسمبر': 'December'
+            };
+            
+            // تحويل الأرقام العربية إلى إنجليزية
+            const arabicToEnglish = (str) => {
+                const arabicNums = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+                const englishNums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                let result = str;
+                arabicNums.forEach((arabic, index) => {
+                    result = result.replace(new RegExp(arabic, 'g'), englishNums[index]);
+                });
+                return result;
+            };
+            
+            // تحويل النص للأرقام الإنجليزية
+            const normalizedText = arabicToEnglish(text);
+            
+            const dayPattern = /(\d{2})\s+(January|February|March|April|May|June|July|August|September|October|November|December|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر)\s+2026/gi;
+            let match;
+            
+            while ((match = dayPattern.exec(normalizedText)) !== null) {
+                const dayNum = parseInt(match[1]);
+                let monthName = match[2];
+                
+                // تحويل الشهر العربي إلى إنجليزي
+                if (monthNames[monthName]) {
+                    monthName = monthNames[monthName];
+                }
+                
+                const dayStart = match.index;
+                
+                // إيجاد نهاية بيانات اليوم (قبل اليوم التالي)
+                let nextDayIndex = normalizedText.length;
+                const nextDayMatch = normalizedText.substring(dayStart + 1).match(/\d{2}\s+(January|February|March|April|May|June|July|August|September|October|November|December|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر)\s+2026/i);
+                if (nextDayMatch) {
+                    nextDayIndex = dayStart + 1 + nextDayMatch.index;
+                }
+                
+                const dayText = normalizedText.substring(dayStart, nextDayIndex);
+                
+                // تحديد نوع اليوم - دعم العربي والإنجليزي
+                let type = 'يوم عمل عادي';
+                
+                if (dayText.match(/Weekend|عطلة أسبوعية|عطلة نهاية الأسبوع/i)) type = 'عطلة نهاية الأسبوع';
+                else if (dayText.match(/Working from Home|عمل من المنزل/i)) type = 'عمل من المنزل';
+                else if (dayText.match(/Site Visit|زيارة ميدانية/i)) type = 'زيارة ميدانية';
+                else if (dayText.match(/Annual Vacation|إجازة سنوية/i)) type = 'إجازة سنوية';
+                else if (dayText.match(/Half Day Leave|إجازة نصف يوم/i)) type = 'إجازة نصف يوم';
+                else if (dayText.match(/Holiday|عطلة رسمية/i)) type = 'عطلة رسمية';
+                else if (dayText.match(/External Escorting|مرافقة خارجية/i)) type = 'مرافقة خارجية';
+                
+                // استخراج الأوقات - دعم التنسيق العربي (ص/م) والإنجليزي (AM/PM)
+                const timeInArray = [];
+                const timeOutArray = [];
+                
+                // البحث عن قسم "وقت الدخول وقت الخروج" أو "Time in Time out"
+                const timeSectionMatch = dayText.match(/(?:وقت الدخول\s*وقت الخروج|Time in\s*Time out)([\s\S]*?)(?=اليوم|Day|النوع|Type|$)/i);
+                if (timeSectionMatch) {
+                    const timeSectionText = timeSectionMatch[1];
+                    
+                    // استخراج الأوقات بالتنسيق العربي والإنجليزي
+                    const timeRegex = /(\d{1,2}:\d{2}\s*(?:[AP]M|ص|م))/gi;
+                    const timesInSection = [];
+                    let tm;
+                    while ((tm = timeRegex.exec(timeSectionText)) !== null) {
+                        timesInSection.push(tm[1]);
+                    }
+                    
+                    // تقسيم إلى دخول وخروج
+                    for (let i = 0; i < timesInSection.length; i += 2) {
+                        if (timesInSection[i]) timeInArray.push(timesInSection[i]);
+                        if (timesInSection[i + 1]) timeOutArray.push(timesInSection[i + 1]);
+                    }
+                }
+                
+                const timeIn = timeInArray.length > 0 ? timeInArray.join('<br>') : '-';
+                const timeOut = timeOutArray.length > 0 ? timeOutArray.join('<br>') : '-';
+                
+                // استخراج عدد الساعات - البحث عن أي نمط XX:XX في نهاية السطر
+                let hours = 0;
+                const hoursMatch = dayText.match(/(\d{2}):(\d{2})\s*[\r\n]/);
+                if (hoursMatch) {
+                    hours = parseFloat(hoursMatch[1]) + parseFloat(hoursMatch[2]) / 60;
+                }
+                
+                // استخراج النقص - دعم العربي والإنجليزي
+                let shortage = 0;
+                const shortageMatch = dayText.match(/(?:Shortness|نقص|التقصير)\s*(\d+)/i);
+                if (shortageMatch) {
+                    const num = shortageMatch[1];
+                    if (num.length >= 4 && num.length % 2 === 0) {
+                        const half = num.length / 2;
+                        const firstHalf = num.substring(0, half);
+                        const secondHalf = num.substring(half);
+                        if (firstHalf === secondHalf) {
+                            shortage = parseInt(firstHalf);
+                        } else {
+                            shortage = parseInt(num);
+                        }
+                    } else {
+                        shortage = parseInt(num);
+                    }
+                }
+                
+                // استخراج خارج المكتب - دعم العربي والإنجليزي
+                let outOfStc = 0;
+                const outOfStcMatch = dayText.match(/(?:Out of STC|خارج المكتب|خارج الشركة)\s*(\d+)/i);
+                if (outOfStcMatch) {
+                    const num = outOfStcMatch[1];
+                    if (num.length >= 4 && num.length % 2 === 0) {
+                        const half = num.length / 2;
+                        const firstHalf = num.substring(0, half);
+                        const secondHalf = num.substring(half);
+                        if (firstHalf === secondHalf) {
+                            outOfStc = parseInt(firstHalf);
+                        } else {
+                            outOfStc = parseInt(num);
+                        }
+                    } else {
+                        outOfStc = parseInt(num);
+                    }
+                }
+                
+                // حساب النقص بناءً على ساعات التواجد
+                let calculatedShortage = 0;
+                
+                // تحديد الساعات المطلوبة حسب نوع اليوم (7 ساعات يومياً)
+                const expectedHours = (type === 'يوم عمل عادي' || 
+                                      type === 'زيارة ميدانية' || 
+                                      type === 'عمل من المنزل' || 
+                                      type === 'مرافقة خارجية') ? 7 : 0;
+                
+                // حساب النقص الفعلي
+                if (expectedHours > 0 && hours > 0) {
+                    const shortageHours = expectedHours - hours;
+                    if (shortageHours > 0) {
+                        calculatedShortage = Math.round(shortageHours * 60); // تحويل إلى دقائق
+                    }
+                }
+                
+                // استخدام النقص المحسوب أو النقص من التقرير (أيهما أكبر)
+                const finalShortage = Math.max(calculatedShortage, shortage);
+                
+                days.push({ dayNum, monthName, type, timeIn, timeOut, hours, shortage: finalShortage, outOfStc });
+            }
+            
+            // حساب الإحصائيات من التفاصيل اليومية
+            // إزالة الأيام المكررة - نحتفظ بآخر إدخال لكل يوم
+            const uniqueDays = [];
+            const seenDays = new Set();
+            
+            for (let i = days.length - 1; i >= 0; i--) {
+                if (!seenDays.has(days[i].dayNum)) {
+                    uniqueDays.unshift(days[i]);
+                    seenDays.add(days[i].dayNum);
+                }
+            }
+            
+            const regularDays = uniqueDays.filter(d => d.type === 'يوم عمل عادي').length;
+            const siteDays = uniqueDays.filter(d => d.type === 'زيارة ميدانية').length;
+            const wfhDays = uniqueDays.filter(d => d.type === 'عمل من المنزل').length;
+            const vacationDays = uniqueDays.filter(d => d.type.includes('إجازة')).length;
+            const escortDays = uniqueDays.filter(d => d.type === 'مرافقة خارجية').length;
+            
+            // حساب إجمالي الساعات من الحضور اليومي
+            const totalHours = uniqueDays.reduce((sum, day) => sum + day.hours, 0);
+            
+            // حساب إجمالي النقص (الساعات غير المبررة)
+            const totalShortageMins = uniqueDays.reduce((sum, day) => sum + day.shortage, 0);
+            const unjustifiedHours = totalShortageMins / 60;
+            
+            // حساب إجمالي الوقت خارج المكتب
+            const totalOutOfStcMins = uniqueDays.reduce((sum, day) => sum + day.outOfStc, 0);
+            const outOfStcHours = totalOutOfStcMins / 60;
+            
+            // الدقائق الإضافية (حالياً صفر - يمكن حسابها لاحقاً إذا لزم)
+            const extraMinutes = 0;
+            const extraHours = 0;
+            
+            return {
+                employeeName,
+                employeeId,
+                department,
+                month,
+                totalHours: totalHours.toFixed(2),
+                unjustifiedHours: unjustifiedHours.toFixed(2),
+                unjustifiedMinutes: totalShortageMins.toString(),
+                extraHours: extraHours.toFixed(2),
+                extraMinutes: extraMinutes.toString(),
+                outOfStcHours: outOfStcHours.toFixed(2),
+                outOfStcMinutes: totalOutOfStcMins.toString(),
+                regularDays,
+                siteDays,
+                wfhDays,
+                vacationDays,
+                escortDays,
+                days: uniqueDays.sort((a, b) => a.dayNum - b.dayNum)
+            };
+        }
+        
+        function displayResults(data) {
+            // عرض الإحصائيات
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">إجمالي ساعات الحضور</div>
+                    <div class="stat-value">${data.totalHours} <span class="stat-unit">ساعة</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">أيام العمل العادية</div>
+                    <div class="stat-value">${data.regularDays} <span class="stat-unit">يوم</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">الدقائق الإضافية</div>
+                    <div class="stat-value">${data.extraMinutes} <span class="stat-unit">دقيقة</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">الساعات خارج المكتب</div>
+                    <div class="stat-value">${data.outOfStcHours} <span class="stat-unit">ساعة</span> (${data.outOfStcMinutes} دقيقة)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">الساعات غير المبررة</div>
+                    <div class="stat-value">${data.unjustifiedHours} <span class="stat-unit">ساعة</span> (${data.unjustifiedMinutes} دقيقة)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">أيام الإجازات</div>
+                    <div class="stat-value">${data.vacationDays} <span class="stat-unit">يوم</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">العمل من المنزل</div>
+                    <div class="stat-value">${data.wfhDays} <span class="stat-unit">يوم</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">الزيارات الميدانية</div>
+                    <div class="stat-value">${data.siteDays} <span class="stat-unit">يوم</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">المرافقة الخارجية</div>
+                    <div class="stat-value">${data.escortDays} <span class="stat-unit">يوم</span></div>
+                </div>
+            `;
+            document.getElementById('statsGrid').innerHTML = statsHTML;
+            
+            // عرض جدول التفاصيل
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>اليوم</th>
+                            <th>النوع</th>
+                            <th>وقت الدخول</th>
+                            <th>وقت الخروج</th>
+                            <th>عدد ساعات التواجد</th>
+                            <th>نقص (دقيقة)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            data.days.forEach(day => {
+                const typeClass = getTypeClass(day.type);
+                const monthNameAr = day.monthName === 'January' ? 'يناير' : 
+                                   day.monthName === 'February' ? 'فبراير' :
+                                   day.monthName === 'March' ? 'مارس' :
+                                   day.monthName === 'April' ? 'أبريل' :
+                                   day.monthName === 'May' ? 'مايو' :
+                                   day.monthName === 'June' ? 'يونيو' :
+                                   day.monthName === 'July' ? 'يوليو' :
+                                   day.monthName === 'August' ? 'أغسطس' :
+                                   day.monthName === 'September' ? 'سبتمبر' :
+                                   day.monthName === 'October' ? 'أكتوبر' :
+                                   day.monthName === 'November' ? 'نوفمبر' :
+                                   day.monthName === 'December' ? 'ديسمبر' : day.monthName;
+                tableHTML += `
+                    <tr>
+                        <td>${day.dayNum} ${monthNameAr} 2026</td>
+                        <td><span class="day-type ${typeClass}">${day.type}</span></td>
+                        <td class="time-cell" style="line-height: 1.8;">${day.timeIn}</td>
+                        <td class="time-cell" style="line-height: 1.8;">${day.timeOut}</td>
+                        <td>${day.hours > 0 ? day.hours.toFixed(2) : '-'}</td>
+                        <td>${day.shortage > 0 ? day.shortage : '-'}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `</tbody></table>`;
+            document.getElementById('detailsTable').innerHTML = tableHTML;
+        }
+        
+        function getTypeClass(type) {
+            if (type === 'يوم عمل عادي') return 'type-regular';
+            if (type === 'عطلة نهاية الأسبوع') return 'type-weekend';
+            if (type.includes('إجازة')) return 'type-vacation';
+            if (type === 'عمل من المنزل') return 'type-wfh';
+            if (type === 'زيارة ميدانية') return 'type-site';
+            if (type === 'عطلة رسمية') return 'type-holiday';
+            if (type === 'مرافقة خارجية') return 'type-site';
+            return 'type-regular';
+        }
+        
+        function clearReport() {
+            document.getElementById('reportText').value = '';
+            document.getElementById('results').classList.remove('show');
+            analysisData = null;
+        }
+        
+        function downloadExcel() {
+            if (!analysisData) {
+                alert('⚠️ لا توجد بيانات لتحميلها');
+                return;
+            }
+            alert('📥 سيتم تحميل ملف Excel قريباً. يمكنك استخدام البيانات المعروضة حالياً.');
+        }
+        
+        function printReport() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
