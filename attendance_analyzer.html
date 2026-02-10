@@ -500,7 +500,7 @@
                     placeholder="الصق نص تقرير الحضور الكامل هنا...
 
 مثال: Attendance Report January,2026
-Employee Name Mohammad Mofreh Mahfouz Alrashidi
+Employee Name ...
 ..."></textarea>
                 
                 <div class="btn-container">
@@ -673,21 +673,21 @@ Employee Name Mohammad Mofreh Mahfouz Alrashidi
                 }
                 
                 // استخراج خارج المكتب - دعم العربي والإنجليزي
-                let outOfStc = 0;
-                const outOfStcMatch = dayText.match(/(?:Out of STC|خارج المكتب|خارج الشركة)\s*(\d+)/i);
-                if (outOfStcMatch) {
-                    const num = outOfStcMatch[1];
+                let outOfOffice = 0;
+                const outOfOfficeMatch = dayText.match(/(?:Out of Office|خارج المكتب|خارج الشركة)\s*(\d+)/i);
+                if (outOfOfficeMatch) {
+                    const num = outOfOfficeMatch[1];
                     if (num.length >= 4 && num.length % 2 === 0) {
                         const half = num.length / 2;
                         const firstHalf = num.substring(0, half);
                         const secondHalf = num.substring(half);
                         if (firstHalf === secondHalf) {
-                            outOfStc = parseInt(firstHalf);
+                            outOfOffice = parseInt(firstHalf);
                         } else {
-                            outOfStc = parseInt(num);
+                            outOfOffice = parseInt(num);
                         }
                     } else {
-                        outOfStc = parseInt(num);
+                        outOfOffice = parseInt(num);
                     }
                 }
                 
@@ -711,7 +711,7 @@ Employee Name Mohammad Mofreh Mahfouz Alrashidi
                 // استخدام النقص المحسوب أو النقص من التقرير (أيهما أكبر)
                 const finalShortage = Math.max(calculatedShortage, shortage);
                 
-                days.push({ dayNum, monthName, type, timeIn, timeOut, hours, shortage: finalShortage, outOfStc });
+                days.push({ dayNum, monthName, type, timeIn, timeOut, hours, shortage: finalShortage, outOfOffice });
             }
             
             // حساب الإحصائيات من التفاصيل اليومية
@@ -740,8 +740,8 @@ Employee Name Mohammad Mofreh Mahfouz Alrashidi
             const unjustifiedHours = totalShortageMins / 60;
             
             // حساب إجمالي الوقت خارج المكتب
-            const totalOutOfStcMins = uniqueDays.reduce((sum, day) => sum + day.outOfStc, 0);
-            const outOfStcHours = totalOutOfStcMins / 60;
+            const totalOutOfOfficeMins = uniqueDays.reduce((sum, day) => sum + day.outOfOffice, 0);
+            const outOfOfficeHours = totalOutOfOfficeMins / 60;
             
             // الدقائق الإضافية (حالياً صفر - يمكن حسابها لاحقاً إذا لزم)
             const extraMinutes = 0;
@@ -757,8 +757,8 @@ Employee Name Mohammad Mofreh Mahfouz Alrashidi
                 unjustifiedMinutes: totalShortageMins.toString(),
                 extraHours: extraHours.toFixed(2),
                 extraMinutes: extraMinutes.toString(),
-                outOfStcHours: outOfStcHours.toFixed(2),
-                outOfStcMinutes: totalOutOfStcMins.toString(),
+                outOfOfficeHours: outOfOfficeHours.toFixed(2),
+                outOfOfficeMinutes: totalOutOfOfficeMins.toString(),
                 regularDays,
                 siteDays,
                 wfhDays,
@@ -785,7 +785,7 @@ Employee Name Mohammad Mofreh Mahfouz Alrashidi
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">الساعات خارج المكتب</div>
-                    <div class="stat-value">${data.outOfStcHours} <span class="stat-unit">ساعة</span> (${data.outOfStcMinutes} دقيقة)</div>
+                    <div class="stat-value">${data.outOfOfficeHours} <span class="stat-unit">ساعة</span> (${data.outOfOfficeMinutes} دقيقة)</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">الساعات غير المبررة</div>
