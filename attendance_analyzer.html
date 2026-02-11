@@ -735,8 +735,9 @@ Employee Name ...
                                       type === 'عمل من المنزل' || 
                                       type === 'مرافقة خارجية') ? 7 : 0;
                 
-                // حساب النقص الفعلي
-                if (expectedHours > 0 && hours > 0) {
+                // حساب النقص: إذا كان يوم عمل، نحسب الفرق بين المطلوب والفعلي
+                // حتى لو كانت الساعات صفر (غائب بدون مبرر)
+                if (expectedHours > 0) {
                     const shortageHours = expectedHours - hours;
                     if (shortageHours > 0) {
                         calculatedShortage = Math.round(shortageHours * 60); // تحويل إلى دقائق
@@ -770,17 +771,39 @@ Employee Name ...
             // حساب إجمالي الساعات من الحضور اليومي
             const totalHours = uniqueDays.reduce((sum, day) => sum + day.hours, 0);
             
-            // حساب إجمالي النقص (الساعات غير المبررة)
+            // حساب إجمالي ساعات الدوام المطلوبة
+            const workDays = uniqueDays.filter(d => 
+                d.type === 'يوم عمل عادي' || 
+                d.type === 'زيارة ميدانية' || 
+                d.type === 'عمل من المنزل' || 
+                d.type === 'مرافقة خارجية'
+            );
+            const totalRequiredHours = workDays.length * 7;
+            
+            // حساب إجمالي النقص بالدقائق والساعات
             const totalShortageMins = uniqueDays.reduce((sum, day) => sum + day.shortage, 0);
-            const unjustifiedHours = totalShortageMins / 60;
+            const totalShortageHours = totalShortageMins / 60;
+            
+            // تحويل النقص إلى ساعات:دقائق
+            const shortageH = Math.floor(totalShortageHours);
+            const shortageM = Math.round((totalShortageHours - shortageH) * 60);
+            const shortageFormatted = shortageH > 0 
+                ? `${shortageH} س ${shortageM} د` 
+                : `${shortageM} د`;
             
             // حساب إجمالي الوقت خارج المكتب
             const totalOutOfOfficeMins = uniqueDays.reduce((sum, day) => sum + day.outOfOffice, 0);
             const outOfOfficeHours = totalOutOfOfficeMins / 60;
             
-            // الدقائق الإضافية (حالياً صفر - يمكن حسابها لاحقاً إذا لزم)
-            const extraMinutes = 0;
-            const extraHours = 0;
+            // حساب الساعات الإضافية (إذا عمل أكثر من 7 ساعات في يوم ما)
+            const extraMins = uniqueDays.reduce((sum, day) => {
+                if ((day.type === 'يوم عمل عادي' || day.type === 'زيارة ميدانية' || 
+                     day.type === 'عمل من المنزل' || day.type === 'مرافقة خارجية') && day.hours > 7) {
+                    return sum + Math.round((day.hours - 7) * 60);
+                }
+                return sum;
+            }, 0);
+            const extraHours = extraMins / 60;
             
             return {
                 employeeName,
@@ -788,10 +811,15 @@ Employee Name ...
                 department,
                 month,
                 totalHours: totalHours.toFixed(2),
-                unjustifiedHours: unjustifiedHours.toFixed(2),
+                totalRequiredHours,
+                workDaysCount: workDays.length,
+                shortageFormatted,
+                totalShortageHours: totalShortageHours.toFixed(2),
+                totalShortageMins: totalShortageMins.toString(),
+                unjustifiedHours: totalShortageHours.toFixed(2),
                 unjustifiedMinutes: totalShortageMins.toString(),
                 extraHours: extraHours.toFixed(2),
-                extraMinutes: extraMinutes.toString(),
+                extraMinutes: extraMins.toString(),
                 outOfOfficeHours: outOfOfficeHours.toFixed(2),
                 outOfOfficeMinutes: totalOutOfOfficeMins.toString(),
                 regularDays,
@@ -811,8 +839,12 @@ Employee Name ...
                     <div class="stat-value">${data.totalHours} <span class="stat-unit">ساعة</span></div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">أيام العمل العادية</div>
-                    <div class="stat-value">${data.regularDays} <span class="stat-unit">يوم</span></div>
+                    <div class="stat-label">ساعات الدوام المطلوبة</div>
+                    <div class="stat-value">${data.totalRequiredHours} <span class="stat-unit">ساعة</span> (${data.workDaysCount} يوم × 7)</div>
+                </div>
+                <div class="stat-card" style="border-right: 4px solid #e76f6f;">
+                    <div class="stat-label">⚠️ إجمالي النقص</div>
+                    <div class="stat-value" style="color: #e76f6f;">${data.shortageFormatted} <span class="stat-unit">(${data.totalShortageMins} دقيقة)</span></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">الدقائق الإضافية</div>
@@ -821,10 +853,6 @@ Employee Name ...
                 <div class="stat-card">
                     <div class="stat-label">الساعات خارج المكتب</div>
                     <div class="stat-value">${data.outOfOfficeHours} <span class="stat-unit">ساعة</span> (${data.outOfOfficeMinutes} دقيقة)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">الساعات غير المبررة</div>
-                    <div class="stat-value">${data.unjustifiedHours} <span class="stat-unit">ساعة</span> (${data.unjustifiedMinutes} دقيقة)</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">أيام الإجازات</div>
@@ -854,8 +882,9 @@ Employee Name ...
                             <th>النوع</th>
                             <th>وقت الدخول</th>
                             <th>وقت الخروج</th>
-                            <th>عدد ساعات التواجد</th>
-                            <th>نقص (دقيقة)</th>
+                            <th>ساعات التواجد</th>
+                            <th>المطلوب</th>
+                            <th>النقص</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -875,14 +904,37 @@ Employee Name ...
                                    day.monthName === 'October' ? 'أكتوبر' :
                                    day.monthName === 'November' ? 'نوفمبر' :
                                    day.monthName === 'December' ? 'ديسمبر' : day.monthName;
+                
+                const isWorkDay = (day.type === 'يوم عمل عادي' || day.type === 'زيارة ميدانية' || 
+                                   day.type === 'عمل من المنزل' || day.type === 'مرافقة خارجية');
+                const required = isWorkDay ? '7:00' : '-';
+                
+                // تنسيق ساعات التواجد
+                const hoursH = Math.floor(day.hours);
+                const hoursM = Math.round((day.hours - hoursH) * 60);
+                const hoursFormatted = day.hours > 0 ? `${hoursH}:${String(hoursM).padStart(2,'0')}` : '-';
+                
+                // تنسيق النقص بصيغة س:د
+                let shortageFormatted = '-';
+                let shortageStyle = '';
+                if (day.shortage > 0) {
+                    const sH = Math.floor(day.shortage / 60);
+                    const sM = day.shortage % 60;
+                    shortageFormatted = sH > 0 
+                        ? `${sH}:${String(sM).padStart(2,'0')} س` 
+                        : `${sM} د`;
+                    shortageStyle = 'color: #e76f6f; font-weight: 600;';
+                }
+                
                 tableHTML += `
                     <tr>
-                        <td>${day.dayNum} ${monthNameAr} 2026</td>
+                        <td>${day.dayNum} ${monthNameAr}</td>
                         <td><span class="day-type ${typeClass}">${day.type}</span></td>
                         <td class="time-cell" style="line-height: 1.8;">${day.timeIn}</td>
                         <td class="time-cell" style="line-height: 1.8;">${day.timeOut}</td>
-                        <td>${day.hours > 0 ? day.hours.toFixed(2) : '-'}</td>
-                        <td>${day.shortage > 0 ? day.shortage : '-'}</td>
+                        <td>${hoursFormatted}</td>
+                        <td>${required}</td>
+                        <td style="${shortageStyle}">${shortageFormatted}</td>
                     </tr>
                 `;
             });
