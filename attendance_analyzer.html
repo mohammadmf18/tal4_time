@@ -646,11 +646,46 @@ Employee Name ...
                 const timeIn = timeInArray.length > 0 ? timeInArray.join('<br>') : '-';
                 const timeOut = timeOutArray.length > 0 ? timeOutArray.join('<br>') : '-';
                 
-                // استخراج عدد الساعات - البحث عن أي نمط XX:XX في نهاية السطر
+                // حساب إجمالي ساعات التواجد من جميع الفترات (دخول وخروج)
                 let hours = 0;
-                const hoursMatch = dayText.match(/(\d{2}):(\d{2})\s*[\r\n]/);
-                if (hoursMatch) {
-                    hours = parseFloat(hoursMatch[1]) + parseFloat(hoursMatch[2]) / 60;
+                
+                // أولاً: حساب من الأوقات المستخرجة مباشرة إذا وُجدت
+                if (timeInArray.length > 0 && timeOutArray.length > 0) {
+                    const parseTime = (timeStr) => {
+                        // تحويل الوقت إلى دقائق
+                        const normalized = timeStr.trim()
+                            .replace(/ص/g, 'AM')
+                            .replace(/م/g, 'PM');
+                        const match = normalized.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+                        if (!match) return null;
+                        let h = parseInt(match[1]);
+                        const m = parseInt(match[2]);
+                        const period = match[3] ? match[3].toUpperCase() : null;
+                        if (period === 'PM' && h !== 12) h += 12;
+                        if (period === 'AM' && h === 12) h = 0;
+                        return h * 60 + m;
+                    };
+                    
+                    for (let i = 0; i < Math.min(timeInArray.length, timeOutArray.length); i++) {
+                        const inMins = parseTime(timeInArray[i]);
+                        const outMins = parseTime(timeOutArray[i]);
+                        if (inMins !== null && outMins !== null && outMins > inMins) {
+                            hours += (outMins - inMins) / 60;
+                        }
+                    }
+                }
+                
+                // ثانياً: إذا لم تُحسب من الأوقات، استخرج من نمط XX:XX في نهاية السطر
+                if (hours === 0) {
+                    const allHoursMatches = [...dayText.matchAll(/(\d{2}):(\d{2})\s*[\r\n]/g)];
+                    for (const m of allHoursMatches) {
+                        const h = parseInt(m[1]);
+                        const min = parseInt(m[2]);
+                        // تأكد أنه ساعات تواجد وليس وقت دخول/خروج (أقل من 24 ساعة)
+                        if (h < 24 && min < 60) {
+                            hours += h + min / 60;
+                        }
+                    }
                 }
                 
                 // استخراج النقص - دعم العربي والإنجليزي
