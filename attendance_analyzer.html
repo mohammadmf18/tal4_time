@@ -379,6 +379,17 @@
             border-collapse: collapse;
         }
         
+        table caption {
+            caption-side: top;
+            text-align: right;
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: rgba(107, 127, 215, 0.05);
+            border-radius: 8px 8px 0 0;
+        }
+        
         thead th {
             background: var(--primary);
             color: white;
@@ -499,7 +510,7 @@
                     id="reportText" 
                     placeholder="الصق نص تقرير الحضور الكامل هنا...
 
-مثال: Attendance Report January,2026
+مثال: Attendance Report January,2025
 Employee Name ...
 ..."></textarea>
                 
@@ -559,18 +570,6 @@ Employee Name ...
             const employeeId = text.match(/(?:Employee ID|الرقم الوظيفي)\s*:?\s*(\d+)/i)?.[1] || 'غير محدد';
             const department = text.match(/(?:Department|القطاع|الإدارة)\s*:?\s*([^\n]+)/i)?.[1]?.trim() || 'غير محدد';
             
-            // استخراج الشهر - دعم العربي والإنجليزي
-            const monthMatch = text.match(/(?:of|Report|تقرير)\s+(January|February|March|April|May|June|July|August|September|October|November|December|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر),?\s*(\d{4})/i);
-            const month = monthMatch ? `${monthMatch[1]} ${monthMatch[2]}` : 'غير محدد';
-            
-            // تحليل الأيام - دعم الأشهر العربية والإنجليزية والأرقام العربية
-            const days = [];
-            const monthNames = {
-                'يناير': 'January', 'فبراير': 'February', 'مارس': 'March', 'أبريل': 'April',
-                'مايو': 'May', 'يونيو': 'June', 'يوليو': 'July', 'أغسطس': 'August',
-                'سبتمبر': 'September', 'أكتوبر': 'October', 'نوفمبر': 'November', 'ديسمبر': 'December'
-            };
-            
             // تحويل الأرقام العربية إلى إنجليزية
             const arabicToEnglish = (str) => {
                 const arabicNums = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
@@ -582,10 +581,42 @@ Employee Name ...
                 return result;
             };
             
-            // تحويل النص للأرقام الإنجليزية
+            // تحويل النص بالكامل للأرقام الإنجليزية للمعالجة
             const normalizedText = arabicToEnglish(text);
             
-            const dayPattern = /(\d{2})\s+(January|February|March|April|May|June|July|August|September|October|November|December|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر)\s+2026/gi;
+            // استخراج الشهر والسنة - دعم العربي والإنجليزي مع الأرقام العربية
+            // دعم التنسيقات: "تقرير الحضور والإنصراف فبراير،٢٠٢٦" و "Attendance Report January,2026"
+            const monthMatch = normalizedText.match(/(January|February|March|April|May|June|July|August|September|October|November|December|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر)[،,]?\s*(\d{4})/i);
+            
+            // استخراج السنة من التقرير أو استخدام السنة الحالية
+            let reportYear = monthMatch ? parseInt(monthMatch[2]) : new Date().getFullYear();
+            const month = monthMatch ? `${monthMatch[1]} ${reportYear}` : 'غير محدد';
+            
+            // إذا كان التقرير في بداية العام ولكن التاريخ الحالي في نهاية العام السابق
+            // نفترض أن التقرير للسنة القادمة
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth(); // 0-11
+            const currentYear = currentDate.getFullYear();
+            
+            // إذا نحن في ديسمبر والتقرير لـ يناير، استخدم السنة القادمة
+            if (currentMonth === 11 && monthMatch && monthMatch[1].match(/January|يناير/i)) {
+                reportYear = currentYear + 1;
+            }
+            // إذا نحن في يناير والتقرير لـ ديسمبر، استخدم السنة السابقة
+            else if (currentMonth === 0 && monthMatch && monthMatch[1].match(/December|ديسمبر/i)) {
+                reportYear = currentYear - 1;
+            }
+            
+            // تحليل الأيام - دعم الأشهر العربية والإنجليزية والأرقام العربية
+            const days = [];
+            const monthNames = {
+                'يناير': 'January', 'فبراير': 'February', 'مارس': 'March', 'أبريل': 'April',
+                'مايو': 'May', 'يونيو': 'June', 'يوليو': 'July', 'أغسطس': 'August',
+                'سبتمبر': 'September', 'أكتوبر': 'October', 'نوفمبر': 'November', 'ديسمبر': 'December'
+            };
+            
+            // استخدام السنة المستخرجة أو الحالية في نمط البحث
+            const dayPattern = new RegExp(`(\\d{2})\\s+(January|February|March|April|May|June|July|August|September|October|November|December|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر)\\s+${reportYear}`, 'gi');
             let match;
             
             while ((match = dayPattern.exec(normalizedText)) !== null) {
@@ -601,7 +632,8 @@ Employee Name ...
                 
                 // إيجاد نهاية بيانات اليوم (قبل اليوم التالي)
                 let nextDayIndex = normalizedText.length;
-                const nextDayMatch = normalizedText.substring(dayStart + 1).match(/\d{2}\s+(January|February|March|April|May|June|July|August|September|October|November|December|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر)\s+2026/i);
+                const nextDayPattern = new RegExp(`\\d{2}\\s+(January|February|March|April|May|June|July|August|September|October|November|December|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر)\\s+${reportYear}`, 'i');
+                const nextDayMatch = normalizedText.substring(dayStart + 1).match(nextDayPattern);
                 if (nextDayMatch) {
                     nextDayIndex = dayStart + 1 + nextDayMatch.index;
                 }
@@ -762,18 +794,68 @@ Employee Name ...
                 }
             }
             
-            const regularDays = uniqueDays.filter(d => d.type === 'يوم عمل عادي').length;
-            const siteDays = uniqueDays.filter(d => d.type === 'زيارة ميدانية').length;
-            const wfhDays = uniqueDays.filter(d => d.type === 'عمل من المنزل').length;
-            const vacationDays = uniqueDays.filter(d => d.type.includes('إجازة')).length;
-            const escortDays = uniqueDays.filter(d => d.type === 'مرافقة خارجية').length;
+            // استبعاد اليوم الحالي من الحسابات إذا كان التقرير من نفس الشهر والسنة
+            const currentDay = currentDate.getDate();
             
-            // حساب إجمالي الساعات من الحضور اليومي
-            const totalHours = uniqueDays.reduce((sum, day) => sum + day.hours, 0);
+            // تحديد شهر التقرير
+            const reportMonthMatch = month.match(/(January|February|March|April|May|June|July|August|September|October|November|December|يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر)/i);
+            const reportMonthName = reportMonthMatch ? reportMonthMatch[1] : null;
+            
+            const monthNameToNumber = {
+                'January': 0, 'يناير': 0,
+                'February': 1, 'فبراير': 1,
+                'March': 2, 'مارس': 2,
+                'April': 3, 'أبريل': 3,
+                'May': 4, 'مايو': 4,
+                'June': 5, 'يونيو': 5,
+                'July': 6, 'يوليو': 6,
+                'August': 7, 'أغسطس': 7,
+                'September': 8, 'سبتمبر': 8,
+                'October': 9, 'أكتوبر': 9,
+                'November': 10, 'نوفمبر': 10,
+                'December': 11, 'ديسمبر': 11
+            };
+            
+            const reportMonth = reportMonthName ? monthNameToNumber[reportMonthName] : -1;
+            
+            console.log('=== Current Day Exclusion Debug ===');
+            console.log('Current Date:', currentDate);
+            console.log('Current Day:', currentDay);
+            console.log('Current Month (0-11):', currentMonth);
+            console.log('Current Year:', currentYear);
+            console.log('Report Month String:', month);
+            console.log('Report Month Name:', reportMonthName);
+            console.log('Report Month Number (0-11):', reportMonth);
+            console.log('Report Year:', reportYear);
+            console.log('Months Match?', reportMonth === currentMonth);
+            console.log('Years Match?', reportYear === currentYear);
+            console.log('Should Filter?', reportMonth === currentMonth && reportYear === currentYear);
+            
+            // تصفية الأيام: استبعاد اليوم الحالي إذا كان التقرير من نفس الشهر والسنة
+            const filteredDays = uniqueDays.filter(day => {
+                // إذا التقرير من نفس الشهر والسنة الحالية
+                if (reportMonth === currentMonth && reportYear === currentYear) {
+                    // استبعد اليوم الحالي وما بعده (فقط الأيام قبل اليوم الحالي)
+                    const shouldInclude = day.dayNum < currentDay;
+                    console.log(`Filtering day ${day.dayNum}: currentDay=${currentDay}, reportMonth=${reportMonth}, currentMonth=${currentMonth}, include=${shouldInclude}`);
+                    return shouldInclude;
+                }
+                // إذا التقرير من شهر/سنة مختلفة، احتفظ بجميع الأيام
+                return true;
+            });
+            
+            const regularDays = filteredDays.filter(d => d.type === 'يوم عمل عادي').length;
+            const siteDays = filteredDays.filter(d => d.type === 'زيارة ميدانية').length;
+            const wfhDays = filteredDays.filter(d => d.type === 'عمل من المنزل').length;
+            const vacationDays = filteredDays.filter(d => d.type.includes('إجازة')).length;
+            const escortDays = filteredDays.filter(d => d.type === 'مرافقة خارجية').length;
+            
+            // حساب إجمالي الساعات من الحضور اليومي (من الأيام المفلترة فقط)
+            const totalHours = filteredDays.reduce((sum, day) => sum + day.hours, 0);
             
             // حساب إجمالي ساعات الدوام المطلوبة
             // استبعاد الإجازات السنوية والمرافقة الخارجية من أيام العمل
-            const workDays = uniqueDays.filter(d => 
+            const workDays = filteredDays.filter(d => 
                 d.type === 'يوم عمل عادي' || 
                 d.type === 'زيارة ميدانية' || 
                 d.type === 'عمل من المنزل'
@@ -781,7 +863,7 @@ Employee Name ...
             const totalRequiredHours = workDays.length * 8;
             
             // حساب إجمالي النقص بالدقائق والساعات
-            const totalShortageMins = uniqueDays.reduce((sum, day) => sum + day.shortage, 0);
+            const totalShortageMins = filteredDays.reduce((sum, day) => sum + day.shortage, 0);
             const totalShortageHours = totalShortageMins / 60;
             
             // تحويل النقص إلى ساعات:دقائق
@@ -792,12 +874,12 @@ Employee Name ...
                 : `${shortageM} د`;
             
             // حساب إجمالي الوقت خارج المكتب
-            const totalOutOfOfficeMins = uniqueDays.reduce((sum, day) => sum + day.outOfOffice, 0);
+            const totalOutOfOfficeMins = filteredDays.reduce((sum, day) => sum + day.outOfOffice, 0);
             const outOfOfficeHours = totalOutOfOfficeMins / 60;
             
             // حساب الساعات الإضافية (إذا عمل أكثر من 8 ساعات في يوم ما)
             // فقط لأيام العمل الفعلية (استبعاد الإجازات السنوية والمرافقة الخارجية)
-            const extraMins = uniqueDays.reduce((sum, day) => {
+            const extraMins = filteredDays.reduce((sum, day) => {
                 if ((day.type === 'يوم عمل عادي' || day.type === 'زيارة ميدانية' || 
                      day.type === 'عمل من المنزل') && day.hours > 8) {
                     return sum + Math.round((day.hours - 8) * 60);
@@ -811,6 +893,7 @@ Employee Name ...
                 employeeId,
                 department,
                 month,
+                reportYear,
                 totalHours: totalHours.toFixed(2),
                 totalRequiredHours,
                 workDaysCount: workDays.length,
@@ -828,7 +911,9 @@ Employee Name ...
                 wfhDays,
                 vacationDays,
                 escortDays,
-                days: uniqueDays.sort((a, b) => a.dayNum - b.dayNum)
+                // IMPORTANT: استخدام filteredDays هنا يضمن عدم ظهور اليوم الحالي في الجدول
+                days: filteredDays.sort((a, b) => a.dayNum - b.dayNum),
+                excludedCurrentDay: (reportMonth === currentMonth && reportYear === currentYear && filteredDays.length < uniqueDays.length)
             };
         }
         
@@ -875,16 +960,30 @@ Employee Name ...
             document.getElementById('statsGrid').innerHTML = statsHTML;
             
             // إضافة ملاحظة توضيحية
-            const noteHTML = `
+            let noteHTML = `
                 <div style="background: rgba(107, 127, 215, 0.1); border-right: 3px solid #6B7FD7; padding: 1rem 1.5rem; border-radius: 8px; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
                     <strong style="color: var(--text-primary);">📌 ملاحظة:</strong> الإجازات السنوية والمرافقة الخارجية لا تُحتسب ضمن ساعات الدوام المطلوبة ولا يُحسب لها نقص.
                 </div>
             `;
+            
+            // إضافة تنبيه إذا تم استبعاد اليوم الحالي
+            if (data.excludedCurrentDay) {
+                noteHTML += `
+                <div style="background: rgba(255, 193, 7, 0.1); border-right: 3px solid #ffc107; padding: 1rem 1.5rem; border-radius: 8px; margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <strong style="color: #f59e0b;">⏰ تنبيه:</strong> تم استبعاد اليوم الحالي من جميع الحسابات (الملخص الإحصائي، النقص، الساعات، والجدول) لأن اليوم لم ينتهي بعد. الإحصائيات تشمل فقط الأيام المكتملة.
+                </div>
+                `;
+            }
+            
             document.getElementById('statsGrid').insertAdjacentHTML('afterend', noteHTML);
             
             // عرض جدول التفاصيل
             let tableHTML = `
                 <table>
+                    <caption style="caption-side: top; text-align: right; padding: 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">
+                        عرض ${data.days.length} ${data.days.length === 1 ? 'يوم' : data.days.length === 2 ? 'يومين' : 'أيام'}
+                        ${data.excludedCurrentDay ? ' (اليوم الحالي مستبعد)' : ''}
+                    </caption>
                     <thead>
                         <tr>
                             <th>اليوم</th>
