@@ -818,27 +818,12 @@ Employee Name ...
             
             const reportMonth = reportMonthName ? monthNameToNumber[reportMonthName] : -1;
             
-            console.log('=== Current Day Exclusion Debug ===');
-            console.log('Current Date:', currentDate);
-            console.log('Current Day:', currentDay);
-            console.log('Current Month (0-11):', currentMonth);
-            console.log('Current Year:', currentYear);
-            console.log('Report Month String:', month);
-            console.log('Report Month Name:', reportMonthName);
-            console.log('Report Month Number (0-11):', reportMonth);
-            console.log('Report Year:', reportYear);
-            console.log('Months Match?', reportMonth === currentMonth);
-            console.log('Years Match?', reportYear === currentYear);
-            console.log('Should Filter?', reportMonth === currentMonth && reportYear === currentYear);
-            
             // تصفية الأيام: استبعاد اليوم الحالي إذا كان التقرير من نفس الشهر والسنة
             const filteredDays = uniqueDays.filter(day => {
                 // إذا التقرير من نفس الشهر والسنة الحالية
                 if (reportMonth === currentMonth && reportYear === currentYear) {
                     // استبعد اليوم الحالي وما بعده (فقط الأيام قبل اليوم الحالي)
-                    const shouldInclude = day.dayNum < currentDay;
-                    console.log(`Filtering day ${day.dayNum}: currentDay=${currentDay}, reportMonth=${reportMonth}, currentMonth=${currentMonth}, include=${shouldInclude}`);
-                    return shouldInclude;
+                    return day.dayNum < currentDay;
                 }
                 // إذا التقرير من شهر/سنة مختلفة، احتفظ بجميع الأيام
                 return true;
