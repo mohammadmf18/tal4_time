@@ -729,11 +729,11 @@ Employee Name ...
                 // حساب النقص بناءً على ساعات التواجد
                 let calculatedShortage = 0;
                 
-                // تحديد الساعات المطلوبة حسب نوع اليوم (7 ساعات يومياً)
+                // تحديد الساعات المطلوبة حسب نوع اليوم (8 ساعات يومياً)
                 const expectedHours = (type === 'يوم عمل عادي' || 
                                       type === 'زيارة ميدانية' || 
                                       type === 'عمل من المنزل' || 
-                                      type === 'مرافقة خارجية') ? 7 : 0;
+                                      type === 'مرافقة خارجية') ? 8 : 0;
                 
                 // حساب النقص: إذا كان يوم عمل، نحسب الفرق بين المطلوب والفعلي
                 // حتى لو كانت الساعات صفر (غائب بدون مبرر)
@@ -778,7 +778,7 @@ Employee Name ...
                 d.type === 'عمل من المنزل' || 
                 d.type === 'مرافقة خارجية'
             );
-            const totalRequiredHours = workDays.length * 7;
+            const totalRequiredHours = workDays.length * 8;
             
             // حساب إجمالي النقص بالدقائق والساعات
             const totalShortageMins = uniqueDays.reduce((sum, day) => sum + day.shortage, 0);
@@ -795,11 +795,11 @@ Employee Name ...
             const totalOutOfOfficeMins = uniqueDays.reduce((sum, day) => sum + day.outOfOffice, 0);
             const outOfOfficeHours = totalOutOfOfficeMins / 60;
             
-            // حساب الساعات الإضافية (إذا عمل أكثر من 7 ساعات في يوم ما)
+            // حساب الساعات الإضافية (إذا عمل أكثر من 8 ساعات في يوم ما)
             const extraMins = uniqueDays.reduce((sum, day) => {
                 if ((day.type === 'يوم عمل عادي' || day.type === 'زيارة ميدانية' || 
-                     day.type === 'عمل من المنزل' || day.type === 'مرافقة خارجية') && day.hours > 7) {
-                    return sum + Math.round((day.hours - 7) * 60);
+                     day.type === 'عمل من المنزل' || day.type === 'مرافقة خارجية') && day.hours > 8) {
+                    return sum + Math.round((day.hours - 8) * 60);
                 }
                 return sum;
             }, 0);
@@ -840,7 +840,7 @@ Employee Name ...
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">ساعات الدوام المطلوبة</div>
-                    <div class="stat-value">${data.totalRequiredHours} <span class="stat-unit">ساعة</span> (${data.workDaysCount} يوم × 7)</div>
+                    <div class="stat-value">${data.totalRequiredHours} <span class="stat-unit">ساعة</span> (${data.workDaysCount} يوم × 8)</div>
                 </div>
                 <div class="stat-card" style="border-right: 4px solid #e76f6f;">
                     <div class="stat-label">⚠️ إجمالي النقص</div>
@@ -907,7 +907,7 @@ Employee Name ...
                 
                 const isWorkDay = (day.type === 'يوم عمل عادي' || day.type === 'زيارة ميدانية' || 
                                    day.type === 'عمل من المنزل' || day.type === 'مرافقة خارجية');
-                const required = isWorkDay ? '7:00' : '-';
+                const required = isWorkDay ? '8:00' : '-';
                 
                 // تنسيق ساعات التواجد
                 const hoursH = Math.floor(day.hours);
