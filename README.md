@@ -310,7 +310,7 @@ attendance-system/
 
 هل تحتاج مساعدة؟
 
-- 📧 **البريد الإلكتروني:** your.email@example.com
+- 📧 **البريد الإلكتروني:su@tal4.com
 - 💬 **المناقشات:** [GitHub Discussions](../../discussions)
 - 🐛 **المشاكل:** [GitHub Issues](../../issues)
 
