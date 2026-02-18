@@ -222,6 +222,136 @@
             margin-bottom: 20px;
         }
         
+        /* Hours Selector Styles */
+        .hours-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 8px;
+        }
+        
+        .hour-option {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 20px 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hour-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .hour-option:hover::before {
+            opacity: 1;
+        }
+        
+        .hour-option:hover {
+            transform: translateY(-4px);
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        .hour-option.active {
+            background: linear-gradient(135deg, #6B7FD7 0%, #8B7EC8 100%);
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+            transform: translateY(-2px);
+        }
+        
+        .hour-option.active::before {
+            opacity: 0;
+        }
+        
+        .hour-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            transition: transform 0.3s;
+        }
+        
+        .hour-option:hover .hour-icon {
+            transform: scale(1.15) rotate(-5deg);
+        }
+        
+        .hour-option.active .hour-icon {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
+        
+        .hour-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3d4e61;
+            font-family: 'Tajawal', sans-serif;
+            margin-bottom: 4px;
+            transition: color 0.3s;
+        }
+        
+        .hour-option.active .hour-value {
+            color: white;
+        }
+        
+        .hour-label {
+            font-size: 0.9rem;
+            color: #5a6678;
+            margin-bottom: 6px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .hour-option.active .hour-label {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .hour-desc {
+            font-size: 0.8rem;
+            color: #7a8a9e;
+            font-weight: 400;
+            padding: 4px 8px;
+            background: rgba(107, 127, 215, 0.08);
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 4px;
+            transition: all 0.3s;
+        }
+        
+        .hour-option.active .hour-desc {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hours-selector {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .hour-option {
+                padding: 18px 15px;
+            }
+            
+            .hour-icon {
+                font-size: 2rem;
+            }
+            
+            .hour-value {
+                font-size: 1.8rem;
+            }
+        }
+        
         label {
             display: block;
             margin-bottom: 8px;
@@ -560,6 +690,31 @@
                 <input type="date" id="workDate">
             </div>
             
+            <!-- اختيار عدد الساعات المطلوبة -->
+            <div class="input-group">
+                <label style="display: block; margin-bottom: 12px; color: #3d4e61; font-weight: 600;">⏱️ عدد ساعات التواجد المطلوبة:</label>
+                <div class="hours-selector">
+                    <button type="button" class="hour-option active" data-hours="8" onclick="window.selectRequiredHours(8)">
+                        <div class="hour-icon">🕐</div>
+                        <div class="hour-value">8</div>
+                        <div class="hour-label">ساعات</div>
+                        <div class="hour-desc">دوام كامل</div>
+                    </button>
+                    <button type="button" class="hour-option" data-hours="5" onclick="window.selectRequiredHours(5)">
+                        <div class="hour-icon">🕔</div>
+                        <div class="hour-value">5</div>
+                        <div class="hour-label">ساعات</div>
+                        <div class="hour-desc">دوام قصير</div>
+                    </button>
+                    <button type="button" class="hour-option" data-hours="4" onclick="window.selectRequiredHours(4)">
+                        <div class="hour-icon">🕓</div>
+                        <div class="hour-value">4</div>
+                        <div class="hour-label">ساعات</div>
+                        <div class="hour-desc">نصف دوام</div>
+                    </button>
+                </div>
+            </div>
+            
             <div id="periodsContainer">
                 <!-- سيتم إضافة الفترات هنا -->
             </div>
@@ -615,6 +770,20 @@
         // تعريف المتغيرات العامة
         window.periodCounter = 0;
         window.currentFilter = 'all';
+        window.requiredHours = 8; // الساعات المطلوبة الافتراضية
+        
+        // وظيفة اختيار عدد الساعات المطلوبة
+        window.selectRequiredHours = function(hours) {
+            window.requiredHours = hours;
+            
+            // إزالة active من جميع الأزرار
+            document.querySelectorAll('.hour-option').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // إضافة active للزر المختار
+            document.querySelector(`.hour-option[data-hours="${hours}"]`).classList.add('active');
+        };
         
         // وظيفة إضافة فترة
         window.addPeriod = function() {
@@ -963,7 +1132,7 @@
                 totalMinutes += periods[i].minutes;
             }
             
-            const requiredMinutes = 8 * 60;
+            const requiredMinutes = window.requiredHours * 60; // استخدام الساعات المطلوبة المختارة
             const difference = totalMinutes - requiredMinutes;
             
             // حفظ البيانات
@@ -981,6 +1150,7 @@
                 date: date,
                 periods: periods,
                 totalMinutes: totalMinutes,
+                requiredHours: window.requiredHours, // حفظ عدد الساعات المطلوبة
                 difference: difference,
                 notes: notes,
                 timestamp: new Date().getTime()
@@ -1010,9 +1180,11 @@
             const diffHours = Math.floor(Math.abs(record.difference) / 60);
             const diffMins = Math.abs(record.difference) % 60;
             
+            const requiredHours = record.requiredHours || 8; // استخدام الساعات المحفوظة أو 8 كقيمة افتراضية
+            
             let statusHTML = '';
             if (record.difference === 0) {
-                statusHTML = '<div class="status complete">✅ تم إكمال 8 ساعات بالضبط!</div>';
+                statusHTML = '<div class="status complete">✅ تم إكمال ' + requiredHours + ' ساعات بالضبط!</div>';
             } else if (record.difference < 0) {
                 statusHTML = '<div class="status incomplete">⚠️ ينقصك ' + diffHours + ' ساعة و ' + diffMins + ' دقيقة</div>';
             } else {
@@ -1107,7 +1279,7 @@
                 return;
             }
             
-            let tableHTML = '<table><thead><tr><th>التاريخ</th><th>الفترات</th><th>الساعات</th><th>الحالة</th><th>ملاحظات</th><th>إجراء</th></tr></thead><tbody>';
+            let tableHTML = '<table><thead><tr><th>التاريخ</th><th>الفترات</th><th>الساعات</th><th>المطلوب</th><th>الحالة</th><th>ملاحظات</th><th>إجراء</th></tr></thead><tbody>';
             
             for (let i = 0; i < records.length; i++) {
                 const record = records[i];
@@ -1117,6 +1289,7 @@
                 const mins = record.totalMinutes % 60;
                 const diffHours = Math.floor(Math.abs(record.difference) / 60);
                 const diffMins = Math.abs(record.difference) % 60;
+                const requiredHours = record.requiredHours || 8;
                 
                 let status = '';
                 if (record.difference === 0) {
@@ -1139,6 +1312,7 @@
                 tableHTML += '<td>' + dateString + '</td>';
                 tableHTML += '<td>' + periodsText + '</td>';
                 tableHTML += '<td>' + hours + ':' + (mins < 10 ? '0' : '') + mins + '</td>';
+                tableHTML += '<td><span style="background: rgba(107,127,215,0.1); padding: 4px 12px; border-radius: 6px; font-weight: 600; color: #6B7FD7;">' + requiredHours + ' ساعات</span></td>';
                 tableHTML += '<td>' + status + '</td>';
                 tableHTML += '<td>' + (record.notes || '-') + '</td>';
                 tableHTML += '<td><button class="delete-btn" onclick="window.deleteRecord(\'' + record.date + '\')">حذف</button></td>';
@@ -1187,6 +1361,7 @@
             let totalMinutes = 0;
             let totalPeriods = 0;
             let completeDays = 0;
+            let totalRequiredMinutes = 0; // إجمالي الدقائق المطلوبة بناءً على كل يوم
             
             for (let i = 0; i < weekRecords.length; i++) {
                 totalMinutes += weekRecords[i].totalMinutes;
@@ -1196,12 +1371,14 @@
                 if (weekRecords[i].difference >= 0) {
                     completeDays++;
                 }
+                // جمع الساعات المطلوبة لكل يوم
+                const reqHours = weekRecords[i].requiredHours || 8;
+                totalRequiredMinutes += reqHours * 60;
             }
             
             const totalDays = weekRecords.length;
             const avgMinutes = totalMinutes / totalDays;
-            const requiredMinutes = 8 * 60 * totalDays;
-            const difference = totalMinutes - requiredMinutes;
+            const difference = totalMinutes - totalRequiredMinutes;
             
             reportDiv.innerHTML = 
                 '<div class="summary-cards">' +
@@ -1212,7 +1389,7 @@
                 '<div class="summary-card"><h3>الأيام المكتملة</h3><div class="value">' + completeDays + '/' + totalDays + '</div></div>' +
                 '</div>' +
                 '<div class="result">' +
-                '<div class="result-item"><span>الساعات المطلوبة:</span><span><strong>' + window.formatMinutesToHours(requiredMinutes) + '</strong></span></div>' +
+                '<div class="result-item"><span>الساعات المطلوبة:</span><span><strong>' + window.formatMinutesToHours(totalRequiredMinutes) + '</strong></span></div>' +
                 '<div class="result-item"><span>الساعات الفعلية:</span><span><strong>' + window.formatMinutesToHours(totalMinutes) + '</strong></span></div>' +
                 '<div class="result-item"><span>الفرق:</span><span><strong style="color: ' + (difference >= 0 ? '#28a745' : '#dc3545') + '">' +
                 (difference >= 0 ? '+' : '') + window.formatMinutesToHours(Math.abs(difference)) + '</strong></span></div>' +
@@ -1238,6 +1415,7 @@
             let totalPeriods = 0;
             let completeDays = 0;
             let overtimeDays = 0;
+            let totalRequiredMinutes = 0; // إجمالي الدقائق المطلوبة بناءً على كل يوم
             
             for (let i = 0; i < monthRecords.length; i++) {
                 totalMinutes += monthRecords[i].totalMinutes;
@@ -1250,12 +1428,14 @@
                 if (monthRecords[i].difference > 0) {
                     overtimeDays++;
                 }
+                // جمع الساعات المطلوبة لكل يوم
+                const reqHours = monthRecords[i].requiredHours || 8;
+                totalRequiredMinutes += reqHours * 60;
             }
             
             const totalDays = monthRecords.length;
             const avgMinutes = totalMinutes / totalDays;
-            const requiredMinutes = 8 * 60 * totalDays;
-            const difference = totalMinutes - requiredMinutes;
+            const difference = totalMinutes - totalRequiredMinutes;
             
             const selectedDate = new Date(selectedMonth + '-01');
             const monthName = selectedDate.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' });
@@ -1271,19 +1451,43 @@
                 '<div class="summary-card"><h3>أيام العمل الإضافي</h3><div class="value">' + overtimeDays + '</div></div>' +
                 '</div>' +
                 '<div class="result">' +
-                '<div class="result-item"><span>الساعات المطلوبة:</span><span><strong>' + window.formatMinutesToHours(requiredMinutes) + '</strong></span></div>' +
+                '<div class="result-item"><span>الساعات المطلوبة:</span><span><strong>' + window.formatMinutesToHours(totalRequiredMinutes) + '</strong></span></div>' +
                 '<div class="result-item"><span>الساعات الفعلية:</span><span><strong>' + window.formatMinutesToHours(totalMinutes) + '</strong></span></div>' +
                 '<div class="result-item"><span>الفرق:</span><span><strong style="color: ' + (difference >= 0 ? '#28a745' : '#dc3545') + '">' +
                 (difference >= 0 ? '+' : '') + window.formatMinutesToHours(Math.abs(difference)) + '</strong></span></div>' +
                 '</div>';
         };
         
-        // التهيئة عند تحميل الصفحة
-        window.addEventListener('load', function() {
-            document.getElementById('workDate').valueAsDate = new Date();
+        // Dark mode functionality
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('modeIcon').textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', isDark);
+        }
+        
+        // Load saved preference
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dark mode
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('modeIcon').textContent = '☀️';
+            }
+            
+            // تعيين التاريخ الحالي
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('workDate').value = today;
             document.getElementById('monthSelect').value = new Date().toISOString().slice(0, 7);
+            
+            // إضافة فترة واحدة افتراضية
             window.addPeriod();
+            
+            // عرض السجلات
             window.displayRecords();
+            
+            // عرض التقرير الأسبوعي
+            window.showWeeklyReport();
             
             // التحقق من وجود بيانات في URL (من Shortcuts)
             const urlParams = new URLSearchParams(window.location.search);
@@ -1326,23 +1530,6 @@
             
             // Show install prompt after 3 seconds
             setTimeout(window.showInstallPrompt, 3000);
-        });
-        
-        // Dark mode functionality
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            document.getElementById('modeIcon').textContent = isDark ? '☀️' : '🌙';
-            localStorage.setItem('darkMode', isDark);
-        }
-        
-        // Load saved preference
-        document.addEventListener('DOMContentLoaded', function() {
-            const isDark = localStorage.getItem('darkMode') === 'true';
-            if (isDark) {
-                document.body.classList.add('dark-mode');
-                document.getElementById('modeIcon').textContent = '☀️';
-            }
         });
     </script>
 </body>
