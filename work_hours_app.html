@@ -417,6 +417,29 @@
             background: #c82333;
         }
         
+        .auto-exit-notice {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            border-right: 3px solid #28a745;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         .btn {
             padding: 12px 24px;
             background: linear-gradient(135deg, #6B7FD7 0%, #8B7EC8 100%);
@@ -719,6 +742,10 @@
                 <!-- سيتم إضافة الفترات هنا -->
             </div>
             
+            <div style="background: rgba(107, 127, 215, 0.08); padding: 12px 16px; border-radius: 8px; margin: 15px 0; border-right: 3px solid #6B7FD7; font-size: 0.9rem; color: #5a6678;">
+                <strong style="color: #6B7FD7;">💡 نصيحة:</strong> يمكنك إدخال وقت الدخول فقط، وسيتم حساب وقت الخروج تلقائياً بناءً على عدد الساعات المطلوبة!
+            </div>
+            
             <button class="btn btn-add" onclick="window.addPeriod()">➕ إضافة فترة دخول وخروج</button>
             
             <div class="input-group" style="margin-top: 20px;">
@@ -810,6 +837,45 @@
             `;
             
             container.appendChild(periodDiv);
+            
+            // إضافة event listener لحساب تلقائي عند تغيير وقت الدخول
+            const entryInput = periodDiv.querySelector('.entry-time');
+            const exitInput = periodDiv.querySelector('.exit-time');
+            
+            entryInput.addEventListener('change', function() {
+                // إذا كان هناك وقت دخول ولا يوجد وقت خروج
+                if (this.value && !exitInput.value) {
+                    const requiredMinutes = window.requiredHours * 60;
+                    const entryParts = this.value.split(':');
+                    const entryHour = parseInt(entryParts[0]);
+                    const entryMinute = parseInt(entryParts[1]);
+                    const entryTotalMinutes = entryHour * 60 + entryMinute;
+                    
+                    const exitTotalMinutes = entryTotalMinutes + requiredMinutes;
+                    const exitHour = Math.floor(exitTotalMinutes / 60) % 24;
+                    const exitMinute = exitTotalMinutes % 60;
+                    
+                    exitInput.value = String(exitHour).padStart(2, '0') + ':' + String(exitMinute).padStart(2, '0');
+                    
+                    // إضافة إشعار
+                    const existingNotice = periodDiv.querySelector('.auto-exit-notice');
+                    if (existingNotice) {
+                        existingNotice.remove();
+                    }
+                    
+                    const notice = document.createElement('div');
+                    notice.className = 'auto-exit-notice';
+                    notice.innerHTML = '✓ تم حساب وقت الخروج تلقائياً بناءً على ' + window.requiredHours + ' ساعات عمل';
+                    periodDiv.appendChild(notice);
+                    
+                    // إزالة الإشعار عند تعديل وقت الخروج يدوياً
+                    exitInput.addEventListener('input', function() {
+                        if (notice && notice.parentElement) {
+                            notice.remove();
+                        }
+                    }, { once: true });
+                }
+            });
         };
         
         window.removePeriod = function(id) {
@@ -1107,7 +1173,36 @@
             
             for (let i = 0; i < entryInputs.length; i++) {
                 const entry = entryInputs[i].value;
-                const exit = exitInputs[i].value;
+                let exit = exitInputs[i].value;
+                
+                // إذا تم إدخال وقت الدخول فقط بدون الخروج
+                if (entry && !exit) {
+                    // حساب وقت الخروج تلقائياً بناءً على الساعات المطلوبة
+                    const requiredMinutes = window.requiredHours * 60;
+                    const entryParts = entry.split(':');
+                    const entryHour = parseInt(entryParts[0]);
+                    const entryMinute = parseInt(entryParts[1]);
+                    const entryTotalMinutes = entryHour * 60 + entryMinute;
+                    
+                    const exitTotalMinutes = entryTotalMinutes + requiredMinutes;
+                    const exitHour = Math.floor(exitTotalMinutes / 60) % 24;
+                    const exitMinute = exitTotalMinutes % 60;
+                    
+                    exit = String(exitHour).padStart(2, '0') + ':' + String(exitMinute).padStart(2, '0');
+                    
+                    // تحديث حقل الخروج في الواجهة
+                    exitInputs[i].value = exit;
+                    
+                    // إظهار رسالة للمستخدم
+                    const periodDiv = exitInputs[i].closest('.period-item');
+                    if (periodDiv && !periodDiv.querySelector('.auto-exit-notice')) {
+                        const notice = document.createElement('div');
+                        notice.className = 'auto-exit-notice';
+                        notice.style.cssText = 'background: rgba(40, 167, 69, 0.1); color: #28a745; padding: 8px 12px; border-radius: 6px; margin-top: 10px; font-size: 0.85rem; border-right: 3px solid #28a745;';
+                        notice.innerHTML = '✓ تم حساب وقت الخروج تلقائياً بناءً على ' + window.requiredHours + ' ساعات عمل';
+                        periodDiv.appendChild(notice);
+                    }
+                }
                 
                 if (entry && exit) {
                     const minutes = window.calculateHours(entry, exit);
@@ -1122,7 +1217,7 @@
             }
             
             if (periods.length === 0) {
-                alert('الرجاء إدخال وقت دخول وخروج صحيح في فترة واحدة على الأقل');
+                alert('الرجاء إدخال وقت دخول على الأقل في فترة واحدة');
                 return;
             }
             
