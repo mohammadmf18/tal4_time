@@ -379,6 +379,9 @@
             <div class="header-info">
                 <div id="current-date"></div>
                 <div id="last-update"></div>
+                <button onclick="logout()" style="margin-top: 10px; padding: 8px 20px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    🚪 تسجيل خروج
+                </button>
             </div>
         </div>
         
@@ -764,8 +767,26 @@
             }, 1500);
         }
         
+        function logout() {
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                sessionStorage.removeItem('adminUsername');
+                sessionStorage.removeItem('loginTime');
+                localStorage.removeItem('adminRemember');
+                window.location.href = 'admin_login.html';
+            }
+        }
+        
         // Initialize on load
-        window.addEventListener('DOMContentLoaded', initDashboard);
+        window.addEventListener('DOMContentLoaded', function() {
+            // التحقق من تسجيل الدخول
+            if (!sessionStorage.getItem('adminLoggedIn') && !localStorage.getItem('adminRemember')) {
+                window.location.href = 'admin_login.html';
+                return;
+            }
+            
+            initDashboard();
+        });
     </script>
 </body>
 </html>
