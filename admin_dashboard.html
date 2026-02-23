@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المدير - نظام الحضور</title>
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5471044003678571"
+     crossorigin="anonymous"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            color: #2d3748;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        .header-info {
+            text-align: left;
+            color: #718096;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+        
+        .stat-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .stat-change {
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .stat-change.positive {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .stat-change.negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .chart-container {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .chart-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .chart-filters {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #4a5568;
+            font-weight: 600;
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .chart {
+            height: 300px;
+            position: relative;
+        }
+        
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 100%;
+            gap: 10px;
+        }
+        
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+        }
+        
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #718096;
+            white-space: nowrap;
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 14px;
+        }
+        
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .table-card {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .table-card h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #2d3748;
+            font-weight: 700;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f7fafc;
+            padding: 15px;
+            text-align: right;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+        }
+        
+        tr:hover {
+            background: #f7fafc;
+        }
+        
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+        
+        .pie-chart {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 250px;
+            position: relative;
+        }
+        
+        .pie-slice {
+            position: absolute;
+        }
+        
+        .pie-legend {
+            margin-top: 30px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .refresh-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .back-btn {
+            padding: 12px 24px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tables-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-filters {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>📊 لوحة تحكم المدير</h1>
+                <p style="color: #718096; margin-top: 10px;">نظام إدارة الحضور والساعات</p>
+            </div>
+            <div class="header-info">
+                <div id="current-date"></div>
+                <div id="last-update"></div>
+            </div>
+        </div>
+        
+        <!-- Main Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-label">إجمالي الزوار</div>
+                <div class="stat-value" id="total-visitors">0</div>
+                <span class="stat-change positive" id="visitors-change">+0%</span>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-label">زوار اليوم</div>
+                <div class="stat-value" id="today-visitors">0</div>
+                <span class="stat-change positive" id="today-change">+0%</span>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-label">متوسط الوقت في الموقع</div>
+                <div class="stat-value" id="avg-time">0:00</div>
+                <span class="stat-change positive">+5%</span>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📄</div>
+                <div class="stat-label">الصفحات الأكثر زيارة</div>
+                <div class="stat-value" id="top-page">-</div>
+                <span class="stat-change positive">حاسبة العمل</span>
+            </div>
+        </div>
+        
+        <!-- Visitors Chart -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title">📊 إحصائيات الزوار</div>
+                <div class="chart-filters">
+                    <button class="filter-btn" onclick="changeChartPeriod('week')">أسبوع</button>
+                    <button class="filter-btn active" onclick="changeChartPeriod('month')">شهر</button>
+                    <button class="filter-btn" onclick="changeChartPeriod('year')">سنة</button>
+                </div>
+            </div>
+            <div class="chart">
+                <div class="bar-chart" id="visitors-chart"></div>
+            </div>
+        </div>
+        
+        <!-- Tables Grid -->
+        <div class="tables-grid">
+            <!-- Top Pages -->
+            <div class="table-card">
+                <h3>📄 الصفحات الأكثر زيارة</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الصفحة</th>
+                            <th>الزيارات</th>
+                            <th>النسبة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top-pages-table"></tbody>
+                </table>
+            </div>
+            
+            <!-- Browser Stats -->
+            <div class="table-card">
+                <h3>🌐 المتصفحات المستخدمة</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>المتصفح</th>
+                            <th>المستخدمين</th>
+                            <th>النسبة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="browsers-table"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Device & Location Grid -->
+        <div class="tables-grid">
+            <!-- Device Stats -->
+            <div class="table-card">
+                <h3>📱 الأجهزة المستخدمة</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الجهاز</th>
+                            <th>العدد</th>
+                            <th>التقدم</th>
+                        </tr>
+                    </thead>
+                    <tbody id="devices-table"></tbody>
+                </table>
+            </div>
+            
+            <!-- Location Stats -->
+            <div class="table-card">
+                <h3>🌍 المواقع الجغرافية</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الدولة</th>
+                            <th>الزوار</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="locations-table"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="index.html" class="back-btn">← العودة للرئيسية</a>
+            <button class="refresh-btn" onclick="refreshData()">🔄 تحديث البيانات</button>
+        </div>
+    </div>
+    
+    <script>
+        // Simulated Data (في الواقع ستأتي من Google Analytics أو قاعدة بيانات)
+        let dashboardData = {
+            totalVisitors: 15847,
+            todayVisitors: 342,
+            yesterdayVisitors: 289,
+            avgTime: 345, // seconds
+            topPages: [
+                { name: 'حاسبة ساعات العمل', visits: 5234, percentage: 33 },
+                { name: 'محلل تقارير الحضور', visits: 4521, percentage: 28.5 },
+                { name: 'الصفحة الرئيسية', visits: 3892, percentage: 24.5 },
+                { name: 'الفيديو التوضيحي', visits: 2200, percentage: 14 }
+            ],
+            browsers: [
+                { name: 'Chrome', users: 8234, percentage: 52 },
+                { name: 'Safari', users: 4521, percentage: 28.5 },
+                { name: 'Firefox', users: 1892, percentage: 12 },
+                { name: 'Edge', users: 1200, percentage: 7.5 }
+            ],
+            devices: [
+                { name: 'موبايل', count: 9508, percentage: 60 },
+                { name: 'كمبيوتر', count: 4754, percentage: 30 },
+                { name: 'تابلت', count: 1585, percentage: 10 }
+            ],
+            locations: [
+                { country: 'السعودية', visitors: 8500, status: 'نشط' },
+                { country: 'الإمارات', visitors: 3200, status: 'نشط' },
+                { country: 'مصر', visitors: 2100, status: 'متوسط' },
+                { country: 'الكويت', visitors: 1200, status: 'نشط' },
+                { country: 'أخرى', visitors: 847, status: 'منخفض' }
+            ],
+            monthlyVisitors: [
+                { day: 1, visitors: 234 },
+                { day: 5, visitors: 345 },
+                { day: 10, visitors: 456 },
+                { day: 15, visitors: 523 },
+                { day: 20, visitors: 489 },
+                { day: 25, visitors: 612 },
+                { day: 30, visitors: 342 }
+            ]
+        };
+        
+        // Initialize Dashboard
+        function initDashboard() {
+            updateDateTime();
+            updateStats();
+            updateChart();
+            updateTables();
+            
+            // Update every minute
+            setInterval(updateDateTime, 60000);
+            
+            // Simulate real-time updates
+            setInterval(simulateRealTimeUpdate, 5000);
+        }
+        
+        function updateDateTime() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ar-SA', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const timeStr = now.toLocaleTimeString('ar-SA');
+            
+            document.getElementById('current-date').textContent = dateStr;
+            document.getElementById('last-update').textContent = `آخر تحديث: ${timeStr}`;
+        }
+        
+        function updateStats() {
+            // Total Visitors
+            animateValue('total-visitors', 0, dashboardData.totalVisitors, 1500);
+            
+            // Today Visitors
+            animateValue('today-visitors', 0, dashboardData.todayVisitors, 1500);
+            
+            // Changes
+            const visitorsChange = ((dashboardData.todayVisitors - dashboardData.yesterdayVisitors) / dashboardData.yesterdayVisitors * 100).toFixed(1);
+            document.getElementById('visitors-change').textContent = `+${visitorsChange}%`;
+            
+            const todayChange = (Math.random() * 20).toFixed(1);
+            document.getElementById('today-change').textContent = `+${todayChange}%`;
+            
+            // Average Time
+            const mins = Math.floor(dashboardData.avgTime / 60);
+            const secs = dashboardData.avgTime % 60;
+            document.getElementById('avg-time').textContent = `${mins}:${String(secs).padStart(2, '0')}`;
+            
+            // Top Page
+            document.getElementById('top-page').textContent = dashboardData.topPages[0].name.split(' ')[0];
+        }
+        
+        function animateValue(id, start, end, duration) {
+            const element = document.getElementById(id);
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= end) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current).toLocaleString('ar-SA');
+            }, 16);
+        }
+        
+        function updateChart() {
+            const chartContainer = document.getElementById('visitors-chart');
+            chartContainer.innerHTML = '';
+            
+            const maxVisitors = Math.max(...dashboardData.monthlyVisitors.map(d => d.visitors));
+            
+            dashboardData.monthlyVisitors.forEach(data => {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                const height = (data.visitors / maxVisitors) * 100;
+                bar.style.height = height + '%';
+                
+                const label = document.createElement('div');
+                label.className = 'bar-label';
+                label.textContent = `${data.day}`;
+                
+                const value = document.createElement('div');
+                value.className = 'bar-value';
+                value.textContent = data.visitors;
+                
+                bar.appendChild(label);
+                bar.appendChild(value);
+                chartContainer.appendChild(bar);
+                
+                // Animate
+                setTimeout(() => {
+                    bar.style.height = height + '%';
+                }, 100);
+            });
+        }
+        
+        function updateTables() {
+            // Top Pages
+            const pagesTable = document.getElementById('top-pages-table');
+            pagesTable.innerHTML = '';
+            dashboardData.topPages.forEach(page => {
+                const row = `
+                    <tr>
+                        <td>${page.name}</td>
+                        <td><strong>${page.visits.toLocaleString('ar-SA')}</strong></td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${page.percentage}%"></div>
+                            </div>
+                            <small>${page.percentage}%</small>
+                        </td>
+                    </tr>
+                `;
+                pagesTable.innerHTML += row;
+            });
+            
+            // Browsers
+            const browsersTable = document.getElementById('browsers-table');
+            browsersTable.innerHTML = '';
+            dashboardData.browsers.forEach(browser => {
+                const row = `
+                    <tr>
+                        <td>${browser.name}</td>
+                        <td><strong>${browser.users.toLocaleString('ar-SA')}</strong></td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${browser.percentage}%"></div>
+                            </div>
+                            <small>${browser.percentage}%</small>
+                        </td>
+                    </tr>
+                `;
+                browsersTable.innerHTML += row;
+            });
+            
+            // Devices
+            const devicesTable = document.getElementById('devices-table');
+            devicesTable.innerHTML = '';
+            dashboardData.devices.forEach(device => {
+                const row = `
+                    <tr>
+                        <td>${device.name}</td>
+                        <td><strong>${device.count.toLocaleString('ar-SA')}</strong></td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${device.percentage}%"></div>
+                            </div>
+                            <small>${device.percentage}%</small>
+                        </td>
+                    </tr>
+                `;
+                devicesTable.innerHTML += row;
+            });
+            
+            // Locations
+            const locationsTable = document.getElementById('locations-table');
+            locationsTable.innerHTML = '';
+            dashboardData.locations.forEach(location => {
+                let badgeClass = 'badge-success';
+                if (location.status === 'متوسط') badgeClass = 'badge-warning';
+                if (location.status === 'منخفض') badgeClass = 'badge-info';
+                
+                const row = `
+                    <tr>
+                        <td>${location.country}</td>
+                        <td><strong>${location.visitors.toLocaleString('ar-SA')}</strong></td>
+                        <td><span class="badge ${badgeClass}">${location.status}</span></td>
+                    </tr>
+                `;
+                locationsTable.innerHTML += row;
+            });
+        }
+        
+        function changeChartPeriod(period) {
+            // Remove active class
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active to clicked
+            event.target.classList.add('active');
+            
+            // Update chart based on period
+            // In real app, fetch data from API
+            updateChart();
+        }
+        
+        function simulateRealTimeUpdate() {
+            // Simulate new visitor
+            if (Math.random() > 0.7) {
+                dashboardData.todayVisitors++;
+                dashboardData.totalVisitors++;
+                document.getElementById('today-visitors').textContent = dashboardData.todayVisitors.toLocaleString('ar-SA');
+                document.getElementById('total-visitors').textContent = dashboardData.totalVisitors.toLocaleString('ar-SA');
+            }
+        }
+        
+        function refreshData() {
+            const btn = event.target;
+            btn.textContent = '⏳ جاري التحديث...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                initDashboard();
+                btn.textContent = '🔄 تحديث البيانات';
+                btn.disabled = false;
+                
+                // Show success message
+                const notification = document.createElement('div');
+                notification.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #28a745; color: white; padding: 15px 30px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 1000;';
+                notification.textContent = '✓ تم تحديث البيانات بنجاح';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }, 1500);
+        }
+        
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>
