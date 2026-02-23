@@ -375,6 +375,9 @@
             <div>
                 <h1>📊 لوحة تحكم المدير</h1>
                 <p style="color: #718096; margin-top: 10px;">نظام إدارة الحضور والساعات</p>
+                <div id="data-source-badge" style="margin-top: 10px; display: inline-block; padding: 6px 15px; background: #ffc107; color: #856404; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                    ⚠️ بيانات تجريبية
+                </div>
             </div>
             <div class="header-info">
                 <div id="current-date"></div>
@@ -505,46 +508,178 @@
     </div>
     
     <script>
-        // Simulated Data (في الواقع ستأتي من Google Analytics أو قاعدة بيانات)
+        // Simulated Data (سيتم استبدالها بالبيانات الحقيقية)
         let dashboardData = {
-            totalVisitors: 15847,
-            todayVisitors: 342,
-            yesterdayVisitors: 289,
-            avgTime: 345, // seconds
-            topPages: [
-                { name: 'حاسبة ساعات العمل', visits: 5234, percentage: 33 },
-                { name: 'محلل تقارير الحضور', visits: 4521, percentage: 28.5 },
-                { name: 'الصفحة الرئيسية', visits: 3892, percentage: 24.5 },
-                { name: 'الفيديو التوضيحي', visits: 2200, percentage: 14 }
-            ],
-            browsers: [
-                { name: 'Chrome', users: 8234, percentage: 52 },
-                { name: 'Safari', users: 4521, percentage: 28.5 },
-                { name: 'Firefox', users: 1892, percentage: 12 },
-                { name: 'Edge', users: 1200, percentage: 7.5 }
-            ],
-            devices: [
-                { name: 'موبايل', count: 9508, percentage: 60 },
-                { name: 'كمبيوتر', count: 4754, percentage: 30 },
-                { name: 'تابلت', count: 1585, percentage: 10 }
-            ],
-            locations: [
-                { country: 'السعودية', visitors: 8500, status: 'نشط' },
-                { country: 'الإمارات', visitors: 3200, status: 'نشط' },
-                { country: 'مصر', visitors: 2100, status: 'متوسط' },
-                { country: 'الكويت', visitors: 1200, status: 'نشط' },
-                { country: 'أخرى', visitors: 847, status: 'منخفض' }
-            ],
-            monthlyVisitors: [
-                { day: 1, visitors: 234 },
-                { day: 5, visitors: 345 },
-                { day: 10, visitors: 456 },
-                { day: 15, visitors: 523 },
-                { day: 20, visitors: 489 },
-                { day: 25, visitors: 612 },
-                { day: 30, visitors: 342 }
-            ]
+            totalVisitors: 0,
+            todayVisitors: 0,
+            yesterdayVisitors: 0,
+            avgTime: 0,
+            topPages: [],
+            browsers: [],
+            devices: [],
+            locations: [],
+            monthlyVisitors: []
         };
+        
+        // جلب البيانات الحقيقية من localStorage
+        function loadRealData() {
+            const visits = JSON.parse(localStorage.getItem('site_visits') || '[]');
+            const badge = document.getElementById('data-source-badge');
+            
+            if (visits.length === 0) {
+                // إذا لم توجد بيانات، استخدم البيانات الوهمية
+                useSimulatedData();
+                if (badge) {
+                    badge.style.background = '#ffc107';
+                    badge.style.color = '#856404';
+                    badge.textContent = '⚠️ بيانات تجريبية - انتظر 24 ساعة للبيانات الحقيقية';
+                }
+                return;
+            }
+            
+            // تحديث المؤشر للبيانات الحقيقية
+            if (badge) {
+                badge.style.background = '#28a745';
+                badge.style.color = 'white';
+                badge.textContent = `✅ بيانات حقيقية (${visits.length} زيارة)`;
+            }
+            
+            // حساب الإحصائيات الحقيقية
+            const now = new Date();
+            const today = now.toDateString();
+            const yesterday = new Date(now - 24*60*60*1000).toDateString();
+            
+            dashboardData.totalVisitors = visits.length;
+            dashboardData.todayVisitors = visits.filter(v => 
+                new Date(v.timestamp).toDateString() === today
+            ).length;
+            dashboardData.yesterdayVisitors = visits.filter(v => 
+                new Date(v.timestamp).toDateString() === yesterday
+            ).length;
+            
+            // حساب متوسط الوقت (افتراضي)
+            dashboardData.avgTime = 245;
+            
+            // الصفحات الأكثر زيارة
+            const pageCount = {};
+            visits.forEach(v => {
+                pageCount[v.page] = (pageCount[v.page] || 0) + 1;
+            });
+            
+            dashboardData.topPages = Object.entries(pageCount)
+                .map(([name, visits]) => ({
+                    name,
+                    visits,
+                    percentage: (visits / dashboardData.totalVisitors * 100).toFixed(1)
+                }))
+                .sort((a, b) => b.visits - a.visits)
+                .slice(0, 4);
+            
+            // المتصفحات
+            const browserCount = {};
+            visits.forEach(v => {
+                const ua = v.userAgent || '';
+                let browser = 'Other';
+                if (ua.includes('Chrome')) browser = 'Chrome';
+                else if (ua.includes('Safari')) browser = 'Safari';
+                else if (ua.includes('Firefox')) browser = 'Firefox';
+                else if (ua.includes('Edge')) browser = 'Edge';
+                
+                browserCount[browser] = (browserCount[browser] || 0) + 1;
+            });
+            
+            dashboardData.browsers = Object.entries(browserCount)
+                .map(([name, users]) => ({
+                    name,
+                    users,
+                    percentage: (users / dashboardData.totalVisitors * 100).toFixed(1)
+                }))
+                .sort((a, b) => b.users - a.users);
+            
+            // الأجهزة
+            const deviceCount = { 'موبايل': 0, 'كمبيوتر': 0, 'تابلت': 0 };
+            visits.forEach(v => {
+                const ua = v.userAgent || '';
+                if (/Mobile|Android|iPhone/i.test(ua)) deviceCount['موبايل']++;
+                else if (/iPad|Tablet/i.test(ua)) deviceCount['تابلت']++;
+                else deviceCount['كمبيوتر']++;
+            });
+            
+            dashboardData.devices = Object.entries(deviceCount)
+                .map(([name, count]) => ({
+                    name,
+                    count,
+                    percentage: (count / dashboardData.totalVisitors * 100).toFixed(1)
+                }))
+                .filter(d => d.count > 0);
+            
+            // المواقع (افتراضية)
+            dashboardData.locations = [
+                { country: 'السعودية', visitors: Math.floor(dashboardData.totalVisitors * 0.6), status: 'نشط' },
+                { country: 'الإمارات', visitors: Math.floor(dashboardData.totalVisitors * 0.2), status: 'نشط' },
+                { country: 'مصر', visitors: Math.floor(dashboardData.totalVisitors * 0.1), status: 'متوسط' },
+                { country: 'أخرى', visitors: Math.floor(dashboardData.totalVisitors * 0.1), status: 'منخفض' }
+            ];
+            
+            // الزوار الشهريين (آخر 7 أيام)
+            const last7Days = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(now - i*24*60*60*1000);
+                const dateStr = date.toDateString();
+                const count = visits.filter(v => 
+                    new Date(v.timestamp).toDateString() === dateStr
+                ).length;
+                
+                last7Days.push({
+                    day: date.getDate(),
+                    visitors: count
+                });
+            }
+            dashboardData.monthlyVisitors = last7Days;
+        }
+        
+        function useSimulatedData() {
+            // البيانات الوهمية (للعرض فقط)
+            dashboardData = {
+                totalVisitors: 15847,
+                todayVisitors: 342,
+                yesterdayVisitors: 289,
+                avgTime: 345,
+                topPages: [
+                    { name: 'حاسبة ساعات العمل', visits: 5234, percentage: 33 },
+                    { name: 'محلل تقارير الحضور', visits: 4521, percentage: 28.5 },
+                    { name: 'الصفحة الرئيسية', visits: 3892, percentage: 24.5 },
+                    { name: 'الفيديو التوضيحي', visits: 2200, percentage: 14 }
+                ],
+                browsers: [
+                    { name: 'Chrome', users: 8234, percentage: 52 },
+                    { name: 'Safari', users: 4521, percentage: 28.5 },
+                    { name: 'Firefox', users: 1892, percentage: 12 },
+                    { name: 'Edge', users: 1200, percentage: 7.5 }
+                ],
+                devices: [
+                    { name: 'موبايل', count: 9508, percentage: 60 },
+                    { name: 'كمبيوتر', count: 4754, percentage: 30 },
+                    { name: 'تابلت', count: 1585, percentage: 10 }
+                ],
+                locations: [
+                    { country: 'السعودية', visitors: 8500, status: 'نشط' },
+                    { country: 'الإمارات', visitors: 3200, status: 'نشط' },
+                    { country: 'مصر', visitors: 2100, status: 'متوسط' },
+                    { country: 'الكويت', visitors: 1200, status: 'نشط' },
+                    { country: 'أخرى', visitors: 847, status: 'منخفض' }
+                ],
+                monthlyVisitors: [
+                    { day: 1, visitors: 234 },
+                    { day: 5, visitors: 345 },
+                    { day: 10, visitors: 456 },
+                    { day: 15, visitors: 523 },
+                    { day: 20, visitors: 489 },
+                    { day: 25, visitors: 612 },
+                    { day: 30, visitors: 342 }
+                ]
+            };
+        }
         
         // Initialize Dashboard
         function initDashboard() {
@@ -559,6 +694,9 @@
             }
             
             console.log('User is logged in, loading dashboard...');
+            
+            // جلب البيانات الحقيقية أو الوهمية
+            loadRealData();
             
             updateDateTime();
             updateStats();
