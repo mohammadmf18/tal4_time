@@ -548,6 +548,18 @@
         
         // Initialize Dashboard
         function initDashboard() {
+            // التحقق من تسجيل الدخول
+            const isLoggedIn = sessionStorage.getItem('admin_logged_in');
+            console.log('Dashboard init - checking login:', isLoggedIn);
+            
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                console.log('Not logged in, redirecting to login page');
+                window.location.href = 'admin_login.html';
+                return;
+            }
+            
+            console.log('User is logged in, loading dashboard...');
+            
             updateDateTime();
             updateStats();
             updateChart();
@@ -769,22 +781,26 @@
         
         function logout() {
             if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
-                sessionStorage.removeItem('adminLoggedIn');
-                sessionStorage.removeItem('adminUsername');
-                sessionStorage.removeItem('loginTime');
-                localStorage.removeItem('adminRemember');
+                sessionStorage.removeItem('admin_logged_in');
+                sessionStorage.removeItem('admin_username');
+                sessionStorage.removeItem('login_time');
                 window.location.href = 'admin_login.html';
             }
         }
         
         // Initialize on load
         window.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard page loaded');
+            console.log('Checking session:', sessionStorage.getItem('admin_logged_in'));
+            
             // التحقق من تسجيل الدخول
-            if (!sessionStorage.getItem('adminLoggedIn') && !localStorage.getItem('adminRemember')) {
+            if (!sessionStorage.getItem('admin_logged_in')) {
+                console.log('No session found, redirecting to login');
                 window.location.href = 'admin_login.html';
                 return;
             }
             
+            console.log('Session found, initializing dashboard');
             initDashboard();
         });
     </script>

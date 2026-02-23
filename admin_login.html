@@ -79,13 +79,28 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
+            console.log('Login attempt:', username);
+            
             if (username === 'admin' && password === 'Admin@2026') {
+                console.log('Login successful!');
                 sessionStorage.setItem('admin_logged_in', 'true');
                 sessionStorage.setItem('admin_username', username);
-                window.location.href = 'admin_dashboard.html';
+                console.log('Session storage set:', sessionStorage.getItem('admin_logged_in'));
+                
+                // التحويل للـ Dashboard
+                setTimeout(() => {
+                    window.location.href = 'admin_dashboard.html';
+                }, 100);
             } else {
+                console.log('Login failed');
                 document.getElementById('error').textContent = '❌ خطأ في البيانات';
             }
+        }
+        
+        // التحقق إذا كان مسجل دخول بالفعل
+        if (sessionStorage.getItem('admin_logged_in') === 'true') {
+            console.log('Already logged in, redirecting...');
+            window.location.href = 'admin_dashboard.html';
         }
     </script>
 </body>

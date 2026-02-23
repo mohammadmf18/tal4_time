@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>اختبار تسجيل الدخول</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="test-box">
+        <h1>🔧 اختبار نظام تسجيل الدخول</h1>
+        
+        <h3>الخطوة 1: تسجيل الدخول</h3>
+        <button onclick="testLogin()">تسجيل دخول تجريبي</button>
+        <button onclick="clearSession()">مسح الجلسة</button>
+        
+        <h3>الخطوة 2: حالة الجلسة</h3>
+        <div id="session-status"></div>
+        
+        <h3>الخطوة 3: الانتقال</h3>
+        <button onclick="goToDashboard()">الذهاب للـ Dashboard</button>
+        <button onclick="goToLogin()">الذهاب لصفحة تسجيل الدخول</button>
+        
+        <h3>Console Log:</h3>
+        <div id="console-log" style="background: #2d3748; color: #00ff00; padding: 10px; border-radius: 5px; font-family: monospace; min-height: 100px;"></div>
+    </div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const consoleDiv = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString('ar-SA');
+            consoleDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        function updateStatus() {
+            const statusDiv = document.getElementById('session-status');
+            const isLoggedIn = sessionStorage.getItem('admin_logged_in');
+            const username = sessionStorage.getItem('admin_username');
+            
+            if (isLoggedIn === 'true') {
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `
+                    ✅ <strong>مسجل دخول</strong><br>
+                    المستخدم: ${username || 'غير محدد'}<br>
+                    admin_logged_in: ${isLoggedIn}
+                `;
+                log('✅ الحالة: مسجل دخول');
+            } else {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `
+                    ❌ <strong>غير مسجل دخول</strong><br>
+                    admin_logged_in: ${isLoggedIn || 'null'}
+                `;
+                log('❌ الحالة: غير مسجل دخول');
+            }
+        }
+        
+        function testLogin() {
+            log('🔄 محاولة تسجيل الدخول...');
+            sessionStorage.setItem('admin_logged_in', 'true');
+            sessionStorage.setItem('admin_username', 'admin');
+            log('✅ تم تعيين قيم الجلسة');
+            log('   admin_logged_in = ' + sessionStorage.getItem('admin_logged_in'));
+            log('   admin_username = ' + sessionStorage.getItem('admin_username'));
+            updateStatus();
+        }
+        
+        function clearSession() {
+            log('🗑️ مسح الجلسة...');
+            sessionStorage.clear();
+            log('✅ تم مسح جميع البيانات');
+            updateStatus();
+        }
+        
+        function goToDashboard() {
+            if (sessionStorage.getItem('admin_logged_in') === 'true') {
+                log('➡️ التوجيه إلى Dashboard...');
+                window.location.href = 'admin_dashboard.html';
+            } else {
+                log('❌ لا يمكن الانتقال - غير مسجل دخول');
+                alert('❌ يجب تسجيل الدخول أولاً');
+            }
+        }
+        
+        function goToLogin() {
+            log('➡️ التوجيه إلى صفحة تسجيل الدخول...');
+            window.location.href = 'admin_login.html';
+        }
+        
+        // تحديث الحالة عند التحميل
+        window.addEventListener('DOMContentLoaded', function() {
+            log('📄 تم تحميل صفحة الاختبار');
+            updateStatus();
+        });
+        
+        // تحديث كل ثانية
+        setInterval(updateStatus, 1000);
+    </script>
+</body>
+</html>
