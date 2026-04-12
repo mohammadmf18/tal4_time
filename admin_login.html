@@ -71,32 +71,47 @@
     </div>
     
     <script>
+        // تحذير: هذا النظام يستخدم مصادقة محلية فقط بدون خادم.
+        // لا تستخدم هذه الصفحة لحماية بيانات حساسة حقيقية.
+        // لتغيير بيانات الدخول، استخدم الدالة setAdminCredentials() في وحدة التحكم.
+
+        function _getCredentials() {
+            const stored = localStorage.getItem('admin_credentials');
+            if (stored) {
+                try { return JSON.parse(stored); } catch(e) {}
+            }
+            // الافتراضي: يجب على المستخدم تعيين بيانات عبر setAdminCredentials()
+            return null;
+        }
+
+        // دالة مساعدة: شغّلها من وحدة التحكم لتعيين بيانات الدخول
+        // مثال: setAdminCredentials('admin', 'كلمة_سر_جديدة')
+        window.setAdminCredentials = function(username, password) {
+            localStorage.setItem('admin_credentials', JSON.stringify({ u: username, p: password }));
+            alert('تم حفظ بيانات الدخول بنجاح');
+        };
+
         function login(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            
-            console.log('Login attempt:', username);
-            
-            if (username === 'admin' && password === 'Admin@2026') {
-                console.log('Login successful!');
+            const creds = _getCredentials();
+
+            if (!creds) {
+                document.getElementById('error').textContent = '⚠️ لم يتم تعيين بيانات الدخول بعد. افتح وحدة التحكم واستخدم setAdminCredentials()';
+                return;
+            }
+
+            if (username === creds.u && password === creds.p) {
                 sessionStorage.setItem('admin_logged_in', 'true');
                 sessionStorage.setItem('admin_username', username);
-                console.log('Session storage set:', sessionStorage.getItem('admin_logged_in'));
-                
-                // التحويل للـ Dashboard
-                setTimeout(() => {
-                    window.location.href = 'admin_dashboard.html';
-                }, 100);
+                setTimeout(() => { window.location.href = 'admin_dashboard.html'; }, 100);
             } else {
-                console.log('Login failed');
                 document.getElementById('error').textContent = '❌ خطأ في البيانات';
             }
         }
-        
-        // التحقق إذا كان مسجل دخول بالفعل
+
         if (sessionStorage.getItem('admin_logged_in') === 'true') {
-            console.log('Already logged in, redirecting...');
             window.location.href = 'admin_dashboard.html';
         }
     </script>

@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google-adsense-account" content="ca-pub-5471044003678571">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ساعات العمل</title>
+    
+    <!-- PWA Configuration for iOS App -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ساعات العمل">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    
+    <!-- App Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23667eea'/><stop offset='1' stop-color='%23764ba2'/></linearGradient></defs><rect width='180' height='180' fill='url(%23g)'/><text x='90' y='120' text-anchor='middle' font-size='100' fill='white'>⏰</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5471044003678571"
+     crossorigin="anonymous"></script>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WT18TH9QLV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-WT18TH9QLV');
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700&family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #6B7FD7 0%, #8B7EC8 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            pointer-events: none;
+            animation: shimmer 20s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #1e2846 0%, #2d3561 50%, #343a5e 100%);
+        }
+        
+        body.dark-mode::before {
+            background: radial-gradient(circle at 20% 30%, rgba(107, 127, 215, 0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(139, 126, 200, 0.04) 0%, transparent 50%);
+        }
+        
+        body.dark-mode .card {
+            background: rgba(42, 52, 69, 0.85);
+            color: #d1dae5;
+        }
+        
+        body.dark-mode input,
+        body.dark-mode textarea,
+        body.dark-mode select {
+            background: #252f3e;
+            color: #d1dae5;
+            border-color: #3d4a5e;
+        }
+        
+        body.dark-mode .tab {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.85);
+        }
+        
+        body.dark-mode .tab.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+        
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dark-mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: scale(1.08) rotate(90deg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dark-mode-toggle:active {
+            transform: scale(0.98) rotate(90deg);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(15px);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateX(3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header p {
+            font-weight: 300;
+            opacity: 0.88;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            flex: 1;
+            min-width: 150px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.88);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .tab.active {
+            background: rgba(255, 255, 255, 0.92);
+            color: #6B7FD7;
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            display: none;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .card.active {
+            display: block;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        /* Hours Selector Styles */
+        .hours-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 8px;
+        }
+        
+        .hour-option {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 20px 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hour-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .hour-option:hover::before {
+            opacity: 1;
+        }
+        
+        .hour-option:hover {
+            transform: translateY(-4px);
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        .hour-option.active {
+            background: linear-gradient(135deg, #6B7FD7 0%, #8B7EC8 100%);
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+            transform: translateY(-2px);
+        }
+        
+        .hour-option.active::before {
+            opacity: 0;
+        }
+        
+        .hour-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            transition: transform 0.3s;
+        }
+        
+        .hour-option:hover .hour-icon {
+            transform: scale(1.15) rotate(-5deg);
+        }
+        
+        .hour-option.active .hour-icon {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
+        
+        .hour-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3d4e61;
+            font-family: 'Tajawal', sans-serif;
+            margin-bottom: 4px;
+            transition: color 0.3s;
+        }
+        
+        .hour-option.active .hour-value {
+            color: white;
+        }
+        
+        .hour-label {
+            font-size: 0.9rem;
+            color: #5a6678;
+            margin-bottom: 6px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .hour-option.active .hour-label {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .hour-desc {
+            font-size: 0.8rem;
+            color: #7a8a9e;
+            font-weight: 400;
+            padding: 4px 8px;
+            background: rgba(107, 127, 215, 0.08);
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 4px;
+            transition: all 0.3s;
+        }
+        
+        .hour-option.active .hour-desc {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hours-selector {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .hour-option {
+                padding: 18px 15px;
+            }
+            
+            .hour-icon {
+                font-size: 2rem;
+            }
+            
+            .hour-value {
+                font-size: 1.8rem;
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        input[type="time"],
+        input[type="date"],
+        input[type="text"],
+        input[type="month"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .period-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e9ecef;
+            position: relative;
+        }
+        
+        .period-item h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .period-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .remove-period {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .remove-period:hover {
+            background: #c82333;
+        }
+        
+        .auto-exit-notice {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            border-right: 3px solid #28a745;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6B7FD7 0%, #8B7EC8 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-left: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 6px 18px rgba(107, 127, 215, 0.25);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(107, 127, 215, 0.35);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-add {
+            background: #17a2b8;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .status.complete {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.incomplete {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status.overtime {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        
+        .edit-btn {
+            background: #ffc107;
+            color: #000;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+        
+        .edit-btn:hover {
+            background: #e0a800;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .summary-card h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .summary-card .value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: #e9ecef;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+        
+        .periods-summary {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-right: 4px solid #667eea;
+        }
+        
+        .periods-summary h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .period-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .period-inputs {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px 4px;
+            }
+        }
+        /* ── CSS الطباعة / تصدير PDF ── */
+        @media print {
+            body { background: white !important; color: black !important; }
+            .header, .back-button, .btn, .btn-container,
+            .filter-buttons, adsbygoogle, ins { display: none !important; }
+            .card { box-shadow: none !important; border: 1px solid #ddd; break-inside: avoid; }
+            .result { display: block !important; background: white !important; color: black !important; }
+            @page { margin: 15mm; }
+        }
+    </style>
+    <!-- Analytics Tracker -->
+    <script src="analytics-tracker.js"></script>
+</head>
+<body>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="تبديل الوضع الداكن">
+        <span id="modeIcon">🌙</span>
+    </button>
+    
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-button">← الصفحة الرئيسية</a>
+            <h1>⏰ حاسبة ساعات العمل المتقدمة</h1>
+            <p>دعم تسجيل فترات دخول وخروج متعددة في نفس اليوم</p>
+        </div>
+        
+        <!-- Google AdSense - وحدة إعلانية أفقية -->
+        <div style="text-align: center; margin: 20px 0; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-5471044003678571"
+                 data-ad-slot="4529371827"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="window.showTab('calculator')">حاسبة جديدة</button>
+            <button class="tab" onclick="window.showTab('records')">السجلات</button>
+            <button class="tab" onclick="window.showTab('weekly')">التقرير الأسبوعي</button>
+            <button class="tab" onclick="window.showTab('monthly')">التقرير الشهري</button>
+        </div>
+        
+        <!-- حاسبة جديدة -->
+        <div id="calculator" class="card active">
+            <h2 style="margin-bottom: 20px;">تسجيل يوم عمل جديد</h2>
+            
+            <!-- حقل استخراج الوقت من الرسالة -->
+            <div style="background: #e7f3ff; padding: 20px; border-radius: 10px; margin-bottom: 20px; border-right: 4px solid #667eea;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">📱 نسخ الوقت من رسالة العمل</h3>
+                <div class="input-group">
+                    <label for="smsText">الصق الرسالة هنا (سيتم استخراج الوقت تلقائياً):</label>
+                    <textarea id="smsText" rows="3" placeholder="مثال: تم تسجيل دخولك الساعة 08:30 صباحاً
+أو: وقت الدخول: 8:30 AM
+أو: Entry time: 08:30
+أو: الخروج 05:45 مساءً"></textarea>
+                </div>
+                <button class="btn btn-success" onclick="window.extractTimeFromSMS()">🔍 استخراج الوقت</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('smsText').value = ''">🗑️ مسح</button>
+                <div id="extractResult" style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; display: none;"></div>
+            </div>
+            
+            <div class="input-group">
+                <label for="workDate">التاريخ:</label>
+                <input type="date" id="workDate">
+            </div>
+            
+            <!-- اختيار عدد الساعات المطلوبة -->
+            <div class="input-group">
+                <label style="display: block; margin-bottom: 12px; color: #3d4e61; font-weight: 600;">⏱️ عدد ساعات التواجد المطلوبة:</label>
+                <div class="hours-selector">
+                    <button type="button" class="hour-option active" data-hours="8" onclick="window.selectRequiredHours(8)">
+                        <div class="hour-icon">🕐</div>
+                        <div class="hour-value">8</div>
+                        <div class="hour-label">ساعات</div>
+                        <div class="hour-desc">دوام كامل</div>
+                    </button>
+                    <button type="button" class="hour-option" data-hours="6" onclick="window.selectRequiredHours(6)">
+                        <div class="hour-icon">🕕</div>
+                        <div class="hour-value">6</div>
+                        <div class="hour-label">ساعات</div>
+                        <div class="hour-desc">دوام مخفّض</div>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="periodsContainer">
+                <!-- سيتم إضافة الفترات هنا -->
+            </div>
+            
+            <div style="background: rgba(107, 127, 215, 0.08); padding: 12px 16px; border-radius: 8px; margin: 15px 0; border-right: 3px solid #6B7FD7; font-size: 0.9rem; color: #5a6678;">
+                <strong style="color: #6B7FD7;">💡 نصيحة:</strong> يمكنك إدخال وقت الدخول فقط، وسيتم حساب وقت الخروج تلقائياً بناءً على عدد الساعات المطلوبة!
+            </div>
+            
+            <button class="btn btn-add" onclick="window.addPeriod()">➕ إضافة فترة دخول وخروج</button>
+            
+            <div class="input-group" style="margin-top: 20px;">
+                <label for="notes">ملاحظات (اختياري):</label>
+                <textarea id="notes" rows="3" placeholder="أي ملاحظات عن يوم العمل..."></textarea>
+            </div>
+            
+            <button class="btn" onclick="window.saveWorkDay()">💾 حفظ وحساب</button>
+            <button class="btn btn-secondary" onclick="window.resetForm()">🔄 مسح الحقول</button>
+            
+            <div class="result" id="result" style="display: none;"></div>
+        </div>
+        
+        <!-- السجلات -->
+        <div id="records" class="card">
+            <h2 style="margin-bottom: 20px;">سجل أيام العمل</h2>
+            
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="window.filterRecords('all')">الكل</button>
+                <button class="filter-btn" onclick="window.filterRecords('week')">هذا الأسبوع</button>
+                <button class="filter-btn" onclick="window.filterRecords('month')">هذا الشهر</button>
+            </div>
+            
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
+                <button class="btn btn-danger" onclick="window.clearAllRecords()">🗑️ مسح جميع السجلات</button>
+                <button class="btn btn-secondary" onclick="window.exportBackup()">💾 تصدير نسخة احتياطية</button>
+                <button class="btn btn-secondary" onclick="window.importBackup()">📂 استيراد نسخة احتياطية</button>
+            </div>
+            
+            <div id="recordsList"></div>
+        </div>
+        
+        <!-- التقرير الأسبوعي -->
+        <div id="weekly" class="card">
+            <h2 style="margin-bottom: 20px;">التقرير الأسبوعي</h2>
+            <div id="weeklyReport"></div>
+        </div>
+        
+        <!-- Google AdSense - وحدة إعلانية وسطية -->
+        <div style="text-align: center; margin: 25px 0; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 12px;">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-format="fluid"
+                 data-ad-layout-key="-6t+ed+2i-1n-4w"
+                 data-ad-client="ca-pub-5471044003678571"
+                 data-ad-slot="4529371827"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        
+        <!-- التقرير الشهري -->
+        <div id="monthly" class="card">
+            <h2 style="margin-bottom: 20px;">التقرير الشهري</h2>
+            
+            <div class="input-group" style="max-width: 300px;">
+                <label for="monthSelect">اختر الشهر:</label>
+                <input type="month" id="monthSelect" onchange="window.showMonthlyReport()">
+                <!-- Safari fallback: يظهر فقط إذا كان المتصفح لا يدعم input[type=month] -->
+                <div id="monthFallback" style="display:none; gap:8px; margin-top:8px;">
+                    <select id="fallbackMonth" onchange="window.syncFallbackMonth()" style="padding:8px; border-radius:8px; border:1px solid #ccc; font-family:inherit;">
+                        <option value="01">يناير</option><option value="02">فبراير</option>
+                        <option value="03">مارس</option><option value="04">أبريل</option>
+                        <option value="05">مايو</option><option value="06">يونيو</option>
+                        <option value="07">يوليو</option><option value="08">أغسطس</option>
+                        <option value="09">سبتمبر</option><option value="10">أكتوبر</option>
+                        <option value="11">نوفمبر</option><option value="12">ديسمبر</option>
+                    </select>
+                    <input type="number" id="fallbackYear" min="2020" max="2099" placeholder="السنة"
+                        onchange="window.syncFallbackMonth()"
+                        style="padding:8px; border-radius:8px; border:1px solid #ccc; width:90px; font-family:inherit;">
+                </div>
+            </div>
+            
+            <div id="monthlyReport"></div>
+            <button class="btn btn-secondary" onclick="window.print()" style="margin-top:15px;">🖨️ طباعة / تصدير PDF</button>
+        </div>
+        
+        <!-- Google AdSense - وحدة إعلانية في الأسفل -->
+        <div style="text-align: center; margin: 30px 0 20px 0; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-5471044003678571"
+                 data-ad-slot="4529371827"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+    <script>
+        // تعريف المتغيرات العامة
+        window.periodCounter = 0;
+        window.currentFilter = 'all';
+        window.requiredHours = 8; // الساعات المطلوبة الافتراضية
+        
+        // وظيفة اختيار عدد الساعات المطلوبة
+        window.selectRequiredHours = function(hours) {
+            window.requiredHours = hours;
+            
+            // إزالة active من جميع الأزرار
+            document.querySelectorAll('.hour-option').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // إضافة active للزر المختار
+            document.querySelector(`.hour-option[data-hours="${hours}"]`).classList.add('active');
+        };
+        
+        // وظيفة إضافة فترة
+        window.addPeriod = function() {
+            window.periodCounter++;
+            const container = document.getElementById('periodsContainer');
+            
+            const periodDiv = document.createElement('div');
+            periodDiv.className = 'period-item';
+            periodDiv.id = 'period-' + window.periodCounter;
+            
+            periodDiv.innerHTML = `
+                <h4>الفترة ${window.periodCounter}</h4>
+                ${window.periodCounter > 1 ? '<button class="remove-period" onclick="window.removePeriod(' + window.periodCounter + ')">✕ حذف</button>' : ''}
+                <div class="period-inputs">
+                    <div class="input-group">
+                        <label>وقت الدخول:</label>
+                        <input type="time" id="entry-${window.periodCounter}" class="entry-time">
+                    </div>
+                    <div class="input-group">
+                        <label>وقت الخروج:</label>
+                        <input type="time" id="exit-${window.periodCounter}" class="exit-time">
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(periodDiv);
+            
+            // إضافة event listener لحساب تلقائي عند تغيير وقت الدخول
+            const entryInput = periodDiv.querySelector('.entry-time');
+            const exitInput = periodDiv.querySelector('.exit-time');
+            
+            entryInput.addEventListener('change', function() {
+                // إذا كان هناك وقت دخول ولا يوجد وقت خروج
+                if (this.value && !exitInput.value) {
+                    const requiredMinutes = window.requiredHours * 60;
+                    const entryParts = this.value.split(':');
+                    const entryHour = parseInt(entryParts[0]);
+                    const entryMinute = parseInt(entryParts[1]);
+                    const entryTotalMinutes = entryHour * 60 + entryMinute;
+
+                    // الحد الأقصى للخروج التلقائي هو 6:00 مساءً
+                    const rawExit = entryTotalMinutes + requiredMinutes;
+                    const cappedExit = Math.min(rawExit, window.END_OF_DAY);
+                    const exitHour = Math.floor(cappedExit / 60);
+                    const exitMinute = cappedExit % 60;
+
+                    exitInput.value = String(exitHour).padStart(2, '0') + ':' + String(exitMinute).padStart(2, '0');
+                    
+                    // إضافة إشعار
+                    const existingNotice = periodDiv.querySelector('.auto-exit-notice');
+                    if (existingNotice) {
+                        existingNotice.remove();
+                    }
+                    
+                    const notice = document.createElement('div');
+                    notice.className = 'auto-exit-notice';
+                    notice.innerHTML = '✓ تم حساب وقت الخروج تلقائياً بناءً على ' + window.requiredHours + ' ساعات عمل';
+                    periodDiv.appendChild(notice);
+                    
+                    // إزالة الإشعار عند تعديل وقت الخروج يدوياً
+                    exitInput.addEventListener('input', function() {
+                        if (notice && notice.parentElement) {
+                            notice.remove();
+                        }
+                    }, { once: true });
+                }
+            });
+        };
+        
+        window.removePeriod = function(id) {
+            const element = document.getElementById('period-' + id);
+            if (element) {
+                element.remove();
+            }
+            window.updatePeriodNumbers();
+        };
+        
+        window.updatePeriodNumbers = function() {
+            const periods = document.querySelectorAll('.period-item');
+            periods.forEach(function(period, index) {
+                const h4 = period.querySelector('h4');
+                if (h4) {
+                    h4.textContent = 'الفترة ' + (index + 1);
+                }
+            });
+        };
+        
+        window.resetForm = function() {
+            document.getElementById('periodsContainer').innerHTML = '';
+            window.periodCounter = 0;
+            window.addPeriod();
+            document.getElementById('notes').value = '';
+            document.getElementById('result').style.display = 'none';
+        };
+        
+        // الحد الأقصى للدوام: 6:00 مساءً (18:00)
+        window.END_OF_DAY = 18 * 60; // 1080 دقيقة
+
+        window.calculateHours = function(entryTime, exitTime) {
+            var entryParts = entryTime.split(':');
+            var exitParts  = exitTime.split(':');
+            var entryHour   = parseInt(entryParts[0]);
+            var entryMinute = parseInt(entryParts[1]);
+            var exitHour    = parseInt(exitParts[0]);
+            var exitMinute  = parseInt(exitParts[1]);
+
+            var entryMinutes = entryHour * 60 + entryMinute;
+            var exitMinutes  = exitHour  * 60 + exitMinute;
+
+            if (exitMinutes < entryMinutes) {
+                exitMinutes += 24 * 60;
+            }
+
+            // لا يُحسب التواجد بعد الساعة 6:00 مساءً
+            if (exitMinutes > window.END_OF_DAY) { exitMinutes = window.END_OF_DAY; }
+            if (entryMinutes >= window.END_OF_DAY) { return 0; }
+
+            return exitMinutes - entryMinutes;
+        };
+        
+        window.formatMinutesToHours = function(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return hours + ':' + (mins < 10 ? '0' : '') + mins;
+        };
+        
+        window.formatTime = function(time) {
+            const parts = time.split(':');
+            const hour = parts[0];
+            const minute = parts[1];
+            const h = parseInt(hour);
+            const period = h >= 12 ? 'مساءً' : 'صباحاً';
+            const displayHour = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+            return displayHour + ':' + minute + ' ' + period;
+        };
+        
+        window.extractTimeFromSMS = function() {
+            const smsText = document.getElementById('smsText').value;
+            const resultDiv = document.getElementById('extractResult');
+            
+            if (!smsText.trim()) {
+                alert('الرجاء لصق نص الرسالة أولاً');
+                return;
+            }
+            
+            // استخراج التاريخ من الرسالة
+            const datePatterns = [
+                /(\d{4})\/(\d{1,2})\/(\d{1,2})/,  // 2026/01/19
+                /(\d{1,2})\/(\d{1,2})\/(\d{4})/,  // 19/01/2026
+                /(\d{4})-(\d{1,2})-(\d{1,2})/     // 2026-01-19
+            ];
+            
+            for (let i = 0; i < datePatterns.length; i++) {
+                const match = smsText.match(datePatterns[i]);
+                if (match) {
+                    let year, month, day;
+                    if (i === 0 || i === 2) { // YYYY/MM/DD or YYYY-MM-DD
+                        year = match[1];
+                        month = match[2];
+                        day = match[3];
+                    } else { // DD/MM/YYYY
+                        day = match[1];
+                        month = match[2];
+                        year = match[3];
+                    }
+                    const dateStr = year + '-' + (month.length === 1 ? '0' + month : month) + '-' + (day.length === 1 ? '0' + day : day);
+                    document.getElementById('workDate').value = dateStr;
+                }
+            }
+            
+            // تحديد نوع الرسالة (دخول أو خروج)
+            let isEntry = false;
+            let isExit = false;
+            
+            if (smsText.indexOf('حضورك') >= 0 || smsText.indexOf('دخولك') >= 0 || smsText.indexOf('الدخول') >= 0 || 
+                smsText.indexOf('Entry') >= 0 || smsText.indexOf('Check in') >= 0 || smsText.indexOf('check-in') >= 0) {
+                isEntry = true;
+            }
+            
+            if (smsText.indexOf('انصرافك') >= 0 || smsText.indexOf('خروجك') >= 0 || smsText.indexOf('الخروج') >= 0 || 
+                smsText.indexOf('Exit') >= 0 || smsText.indexOf('Check out') >= 0 || smsText.indexOf('check-out') >= 0) {
+                isExit = true;
+            }
+            
+            // أنماط مختلفة لاستخراج الوقت
+            const patterns = [
+                // نمط الوقت مع كلمة "الوقت:" مثل "الوقت: 11:02"
+                /الوقت[:\s]*(\d{1,2}):(\d{1,2})/gi,
+                // نمط 24 ساعة: 08:30, 14:45, 8:30, 14:5
+                /(\d{1,2}):(\d{1,2})/g,
+                // نمط مع AM/PM: 8:30 AM, 08:30 PM
+                /(\d{1,2}):(\d{1,2})\s*(AM|PM|am|pm|صباحاً|مساءً|صباحا|مساءا)/gi,
+                // نمط عربي: الساعة 8 و 30 دقيقة
+                /الساعة\s*(\d{1,2})\s*و\s*(\d{1,2})/g,
+                // نمط: 8.30, 14.45
+                /(\d{1,2})\.(\d{1,2})/g
+            ];
+            
+            let extractedTimes = [];
+            
+            // البحث عن جميع الأوقات في النص
+            for (let i = 0; i < patterns.length; i++) {
+                const pattern = patterns[i];
+                let match;
+                const regex = new RegExp(pattern.source, pattern.flags);
+                while ((match = regex.exec(smsText)) !== null) {
+                    let hour = parseInt(match[1]);
+                    let minute = parseInt(match[2] || 0);
+                    
+                    // التحقق من وجود AM/PM
+                    let period = match[3] ? match[3].toLowerCase() : '';
+                    
+                    // تحويل إلى 24 ساعة إذا كان بصيغة 12 ساعة
+                    if (period) {
+                        if ((period.indexOf('pm') >= 0 || period.indexOf('مساء') >= 0) && hour < 12) {
+                            hour += 12;
+                        } else if ((period.indexOf('am') >= 0 || period.indexOf('صباح') >= 0) && hour === 12) {
+                            hour = 0;
+                        }
+                    }
+                    
+                    // التحقق من صحة الوقت
+                    if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
+                        const timeStr = (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute;
+                        if (extractedTimes.indexOf(timeStr) === -1) {
+                            extractedTimes.push(timeStr);
+                        }
+                    }
+                }
+            }
+            
+            if (extractedTimes.length === 0) {
+                resultDiv.innerHTML = '<span style="color: #dc3545;">❌ لم يتم العثور على وقت في الرسالة</span>';
+                resultDiv.style.display = 'block';
+                return;
+            }
+            
+            // عرض الأوقات المستخرجة
+            let resultHTML = '<strong style="color: #28a745;">✅ تم استخراج ' + extractedTimes.length + ' وقت:</strong><br><br>';
+            
+            for (let i = 0; i < extractedTimes.length; i++) {
+                const timeStr = extractedTimes[i];
+                const buttonType = isEntry ? 'entry' : (isExit ? 'exit' : 'auto');
+                const buttonLabel = isEntry ? '⬅️ دخول' : (isExit ? '➡️ خروج' : '⏰');
+                
+                resultHTML += '<button class="btn btn-success" style="margin: 5px;" onclick="window.fillTime(\'' + timeStr + '\', \'' + buttonType + '\')">';
+                resultHTML += buttonLabel + ' ' + window.formatTime(timeStr);
+                resultHTML += '</button>';
+            }
+            
+            resultDiv.innerHTML = resultHTML;
+            resultDiv.style.display = 'block';
+            
+            // إذا كان هناك وقت واحد فقط، املأه تلقائياً
+            if (extractedTimes.length === 1) {
+                const fillType = isEntry ? 'entry' : (isExit ? 'exit' : 'auto');
+                window.fillTime(extractedTimes[0], fillType);
+            }
+        };
+        
+        window.fillTime = function(timeStr, type) {
+            type = type || 'auto';
+            
+            const entryInputs = document.querySelectorAll('.entry-time');
+            const exitInputs = document.querySelectorAll('.exit-time');
+            
+            let filled = false;
+            
+            // إذا كان النوع "exit" أو تم تحديده كخروج، املأ حقل الخروج
+            if (type === 'exit') {
+                for (let i = 0; i < exitInputs.length; i++) {
+                    if (!exitInputs[i].value) {
+                        exitInputs[i].value = timeStr;
+                        exitInputs[i].focus();
+                        filled = true;
+                        alert('✅ تم ملء وقت الخروج: ' + window.formatTime(timeStr));
+                        break;
+                    }
+                }
+                
+                // إذا كانت جميع حقول الخروج ممتلئة
+                if (!filled) {
+                    for (let i = 0; i < entryInputs.length; i++) {
+                        if (!entryInputs[i].value) {
+                            entryInputs[i].value = timeStr;
+                            entryInputs[i].focus();
+                            filled = true;
+                            alert('✅ تم ملء وقت الدخول: ' + window.formatTime(timeStr));
+                            break;
+                        }
+                    }
+                }
+            } 
+            // إذا كان النوع "entry" أو تم تحديده كدخول، املأ حقل الدخول
+            else if (type === 'entry') {
+                for (let i = 0; i < entryInputs.length; i++) {
+                    if (!entryInputs[i].value) {
+                        entryInputs[i].value = timeStr;
+                        entryInputs[i].focus();
+                        filled = true;
+                        alert('✅ تم ملء وقت الدخول: ' + window.formatTime(timeStr));
+                        break;
+                    }
+                }
+                
+                // إذا كانت جميع حقول الدخول ممتلئة
+                if (!filled) {
+                    for (let i = 0; i < exitInputs.length; i++) {
+                        if (!exitInputs[i].value) {
+                            exitInputs[i].value = timeStr;
+                            exitInputs[i].focus();
+                            filled = true;
+                            alert('✅ تم ملء وقت الخروج: ' + window.formatTime(timeStr));
+                            break;
+                        }
+                    }
+                }
+            }
+            // وضع تلقائي: املأ أول حقل فارغ
+            else {
+                // محاولة ملء حقل الدخول الفارغ
+                for (let i = 0; i < entryInputs.length; i++) {
+                    if (!entryInputs[i].value) {
+                        entryInputs[i].value = timeStr;
+                        entryInputs[i].focus();
+                        filled = true;
+                        alert('✅ تم ملء وقت الدخول: ' + window.formatTime(timeStr));
+                        break;
+                    }
+                }
+                
+                // إذا كانت جميع حقول الدخول ممتلئة، املأ حقل الخروج
+                if (!filled) {
+                    for (let i = 0; i < exitInputs.length; i++) {
+                        if (!exitInputs[i].value) {
+                            exitInputs[i].value = timeStr;
+                            exitInputs[i].focus();
+                            filled = true;
+                            alert('✅ تم ملء وقت الخروج: ' + window.formatTime(timeStr));
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (!filled) {
+                alert('⚠️ جميع الحقول ممتلئة! أضف فترة جديدة أولاً');
+            }
+            
+            // مسح نص الرسالة
+            document.getElementById('smsText').value = '';
+            document.getElementById('extractResult').style.display = 'none';
+        };
+        
+        window.saveWorkDay = function() {
+            console.log('saveWorkDay called');
+            const date = document.getElementById('workDate').value;
+            const notes = document.getElementById('notes').value;
+            
+            if (!date) {
+                alert('الرجاء إدخال التاريخ');
+                return;
+            }
+            
+            // جمع جميع الفترات
+            const periods = [];
+            const entryInputs = document.querySelectorAll('.entry-time');
+            const exitInputs = document.querySelectorAll('.exit-time');
+            
+            for (let i = 0; i < entryInputs.length; i++) {
+                const entry = entryInputs[i].value;
+                let exit = exitInputs[i].value;
+                
+                // إذا تم إدخال وقت الدخول فقط بدون الخروج
+                if (entry && !exit) {
+                    // حساب وقت الخروج تلقائياً بناءً على الساعات المطلوبة (مع الحد الأقصى 18:00)
+                    const autoReqMins = window.requiredHours * 60;
+                    const entryParts = entry.split(':');
+                    const entryHour = parseInt(entryParts[0]);
+                    const entryMinute = parseInt(entryParts[1]);
+                    const entryTotalMinutes = entryHour * 60 + entryMinute;
+
+                    const rawExit = entryTotalMinutes + autoReqMins;
+                    const cappedExit = Math.min(rawExit, window.END_OF_DAY);
+                    const exitHour = Math.floor(cappedExit / 60);
+                    const exitMinute = cappedExit % 60;
+                    
+                    exit = String(exitHour).padStart(2, '0') + ':' + String(exitMinute).padStart(2, '0');
+                    
+                    // تحديث حقل الخروج في الواجهة
+                    exitInputs[i].value = exit;
+                    
+                    // إظهار رسالة للمستخدم
+                    const periodDiv = exitInputs[i].closest('.period-item');
+                    if (periodDiv && !periodDiv.querySelector('.auto-exit-notice')) {
+                        const notice = document.createElement('div');
+                        notice.className = 'auto-exit-notice';
+                        notice.style.cssText = 'background: rgba(40, 167, 69, 0.1); color: #28a745; padding: 8px 12px; border-radius: 6px; margin-top: 10px; font-size: 0.85rem; border-right: 3px solid #28a745;';
+                        notice.innerHTML = '✓ تم حساب وقت الخروج تلقائياً بناءً على ' + window.requiredHours + ' ساعات عمل';
+                        periodDiv.appendChild(notice);
+                    }
+                }
+                
+                if (entry && exit) {
+                    const minutes = window.calculateHours(entry, exit);
+                    if (minutes > 0) {
+                        periods.push({
+                            entry: entry,
+                            exit: exit,
+                            minutes: minutes
+                        });
+                    }
+                }
+            }
+            
+            if (periods.length === 0) {
+                alert('الرجاء إدخال وقت دخول على الأقل في فترة واحدة');
+                return;
+            }
+
+            // التحقق من تداخل الفترات
+            const toMins = t => { const [h,m] = t.split(':').map(Number); return h*60+m; };
+            for (let i = 0; i < periods.length; i++) {
+                for (let j = i + 1; j < periods.length; j++) {
+                    const aStart = toMins(periods[i].entry), aEnd = toMins(periods[i].exit);
+                    const bStart = toMins(periods[j].entry), bEnd = toMins(periods[j].exit);
+                    if (aStart < bEnd && bStart < aEnd) {
+                        alert(`⚠️ تداخل في الفترات: الفترة ${i+1} (${periods[i].entry}–${periods[i].exit}) تتداخل مع الفترة ${j+1} (${periods[j].entry}–${periods[j].exit}).\n\nالرجاء تصحيح الأوقات.`);
+                        return;
+                    }
+                }
+            }
+            
+            // حساب الإجمالي
+            let totalMinutes = 0;
+            for (let i = 0; i < periods.length; i++) {
+                totalMinutes += periods[i].minutes;
+            }
+            
+            const requiredMinutes = window.requiredHours * 60; // استخدام الساعات المطلوبة المختارة
+            const difference = totalMinutes - requiredMinutes;
+            
+            // حفظ البيانات
+            let records = JSON.parse(localStorage.getItem('workRecords') || '[]');
+            
+            let existingIndex = -1;
+            for (let i = 0; i < records.length; i++) {
+                if (records[i].date === date) {
+                    existingIndex = i;
+                    break;
+                }
+            }
+            
+            const record = {
+                date: date,
+                periods: periods,
+                totalMinutes: totalMinutes,
+                requiredHours: window.requiredHours, // حفظ عدد الساعات المطلوبة
+                difference: difference,
+                notes: notes,
+                timestamp: new Date().getTime()
+            };
+            
+            if (existingIndex >= 0) {
+                if (confirm('يوجد سجل لهذا التاريخ. هل تريد استبداله؟')) {
+                    records[existingIndex] = record;
+                } else {
+                    return;
+                }
+            } else {
+                records.push(record);
+            }
+            
+            localStorage.setItem('workRecords', JSON.stringify(records));
+            
+            window.displayResult(record);
+            
+            alert('تم حفظ السجل بنجاح! ✅');
+        };
+        
+        window.displayResult = function(record) {
+            const resultDiv = document.getElementById('result');
+            const hours = Math.floor(record.totalMinutes / 60);
+            const mins = record.totalMinutes % 60;
+            const diffHours = Math.floor(Math.abs(record.difference) / 60);
+            const diffMins = Math.abs(record.difference) % 60;
+            
+            const requiredHours = record.requiredHours || 8; // استخدام الساعات المحفوظة أو 8 كقيمة افتراضية
+            
+            let statusHTML = '';
+            if (record.difference === 0) {
+                statusHTML = '<div class="status complete">✅ تم إكمال ' + requiredHours + ' ساعات بالضبط!</div>';
+            } else if (record.difference < 0) {
+                statusHTML = '<div class="status incomplete">⚠️ ينقصك ' + diffHours + ' ساعة و ' + diffMins + ' دقيقة</div>';
+            } else {
+                statusHTML = '<div class="status overtime">⏱️ عملت ' + diffHours + ' ساعة و ' + diffMins + ' دقيقة إضافية</div>';
+            }
+            
+            let periodsHTML = '';
+            if (record.periods && record.periods.length > 0) {
+                periodsHTML = '<div class="periods-summary"><h4>الفترات المسجلة:</h4>';
+                for (let i = 0; i < record.periods.length; i++) {
+                    const p = record.periods[i];
+                    const pHours = Math.floor(p.minutes / 60);
+                    const pMins = p.minutes % 60;
+                    periodsHTML += '<div class="period-detail">';
+                    periodsHTML += '<span>الفترة ' + (i + 1) + ': ' + window.formatTime(p.entry) + ' - ' + window.formatTime(p.exit) + '</span>';
+                    periodsHTML += '<strong>' + pHours + ':' + (pMins < 10 ? '0' : '') + pMins + '</strong>';
+                    periodsHTML += '</div>';
+                }
+                periodsHTML += '</div>';
+            }
+            
+            const dateObj = new Date(record.date);
+            const dateString = dateObj.toLocaleDateString('ar-SA');
+            
+            resultDiv.innerHTML = 
+                '<div class="result-item"><span>التاريخ:</span><span><strong>' + dateString + '</strong></span></div>' +
+                '<div class="result-item"><span>عدد الفترات:</span><span><strong>' + (record.periods ? record.periods.length : 0) + '</strong></span></div>' +
+                '<div class="result-item"><span>إجمالي الساعات:</span><span><strong>' + hours + ' ساعة و ' + mins + ' دقيقة</strong></span></div>' +
+                periodsHTML +
+                statusHTML;
+            
+            resultDiv.style.display = 'block';
+        };
+        
+        window.showTab = function(tabName) {
+            const cards = document.querySelectorAll('.card');
+            for (let i = 0; i < cards.length; i++) {
+                cards[i].classList.remove('active');
+            }
+            
+            const tabs = document.querySelectorAll('.tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'records') {
+                window.displayRecords();
+            } else if (tabName === 'weekly') {
+                window.showWeeklyReport();
+            } else if (tabName === 'monthly') {
+                window.showMonthlyReport();
+            }
+        };
+        
+        window.filterRecords = function(filter) {
+            window.currentFilter = filter;
+            const btns = document.querySelectorAll('.filter-btn');
+            for (let i = 0; i < btns.length; i++) {
+                btns[i].classList.remove('active');
+            }
+            event.target.classList.add('active');
+            window.displayRecords();
+        };
+        
+        window.displayRecords = function() {
+            let records = JSON.parse(localStorage.getItem('workRecords') || '[]');
+            records.sort(function(a, b) {
+                return new Date(b.date) - new Date(a.date);
+            });
+            
+            if (window.currentFilter === 'week') {
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                records = records.filter(function(r) {
+                    return new Date(r.date) >= weekAgo;
+                });
+            } else if (window.currentFilter === 'month') {
+                const monthAgo = new Date();
+                monthAgo.setMonth(monthAgo.getMonth() - 1);
+                records = records.filter(function(r) {
+                    return new Date(r.date) >= monthAgo;
+                });
+            }
+            
+            const listDiv = document.getElementById('recordsList');
+            
+            if (records.length === 0) {
+                listDiv.innerHTML = '<div class="empty-state"><h3>لا توجد سجلات</h3></div>';
+                return;
+            }
+            
+            let tableHTML = '<table><thead><tr><th>التاريخ</th><th>الفترات</th><th>الساعات</th><th>المطلوب</th><th>الحالة</th><th>ملاحظات</th><th>إجراء</th></tr></thead><tbody>';
+            
+            for (let i = 0; i < records.length; i++) {
+                const record = records[i];
+                if (!record.periods) record.periods = [];
+                
+                const hours = Math.floor(record.totalMinutes / 60);
+                const mins = record.totalMinutes % 60;
+                const diffHours = Math.floor(Math.abs(record.difference) / 60);
+                const diffMins = Math.abs(record.difference) % 60;
+                const requiredHours = record.requiredHours || 8;
+                
+                let status = '';
+                if (record.difference === 0) {
+                    status = '✅ مكتمل';
+                } else if (record.difference < 0) {
+                    status = '⚠️ ناقص ' + diffHours + ':' + (diffMins < 10 ? '0' : '') + diffMins;
+                } else {
+                    status = '⏱️ زيادة ' + diffHours + ':' + (diffMins < 10 ? '0' : '') + diffMins;
+                }
+                
+                let periodsText = record.periods.length + ' فترة';
+                if (record.periods.length === 1) periodsText = 'فترة واحدة';
+                else if (record.periods.length === 2) periodsText = 'فترتان';
+                else if (record.periods.length === 0) periodsText = '-';
+                
+                const dateObj = new Date(record.date);
+                const dateString = dateObj.toLocaleDateString('ar-SA');
+                
+                tableHTML += '<tr>';
+                tableHTML += '<td>' + dateString + '</td>';
+                tableHTML += '<td>' + periodsText + '</td>';
+                tableHTML += '<td>' + hours + ':' + (mins < 10 ? '0' : '') + mins + '</td>';
+                tableHTML += '<td><span style="background: rgba(107,127,215,0.1); padding: 4px 12px; border-radius: 6px; font-weight: 600; color: #6B7FD7;">' + requiredHours + ' ساعات</span></td>';
+                tableHTML += '<td>' + status + '</td>';
+                tableHTML += '<td>' + (record.notes || '-') + '</td>';
+                tableHTML += '<td><button class="delete-btn" onclick="window.deleteRecord(\'' + record.date + '\')">حذف</button></td>';
+                tableHTML += '</tr>';
+            }
+            
+            tableHTML += '</tbody></table>';
+            listDiv.innerHTML = tableHTML;
+        };
+        
+        window.deleteRecord = function(date) {
+            if (confirm('هل أنت متأكد من حذف هذا السجل؟')) {
+                let records = JSON.parse(localStorage.getItem('workRecords') || '[]');
+                records = records.filter(function(r) {
+                    return r.date !== date;
+                });
+                localStorage.setItem('workRecords', JSON.stringify(records));
+                window.displayRecords();
+            }
+        };
+        
+        window.clearAllRecords = function() {
+            if (confirm('هل أنت متأكد من حذف جميع السجلات؟ لا يمكن التراجع عن هذا الإجراء!')) {
+                localStorage.removeItem('workRecords');
+                window.displayRecords();
+                alert('تم حذف جميع السجلات');
+            }
+        };
+
+        // ── Safari fallback لـ input[type=month] ──────────────────────────
+        (function() {
+            const test = document.createElement('input');
+            test.setAttribute('type', 'month');
+            test.value = '2026-01';
+            if (test.type === 'text' || test.value !== '2026-01') {
+                // المتصفح لا يدعم month picker
+                const fb = document.getElementById('monthFallback');
+                if (fb) {
+                    fb.style.display = 'flex';
+                    // تعيين الشهر والسنة الحالية كقيمة افتراضية
+                    const now = new Date();
+                    document.getElementById('fallbackMonth').value = String(now.getMonth() + 1).padStart(2, '0');
+                    document.getElementById('fallbackYear').value = now.getFullYear();
+                    window.syncFallbackMonth();
+                }
+            }
+        })();
+
+        window.syncFallbackMonth = function() {
+            const m = document.getElementById('fallbackMonth')?.value;
+            const y = document.getElementById('fallbackYear')?.value;
+            if (m && y && y.length === 4) {
+                document.getElementById('monthSelect').value = y + '-' + m;
+                window.showMonthlyReport();
+            }
+        };
+
+        // ── النسخ الاحتياطي واستعادة البيانات ────────────────────────────
+        window.exportBackup = function() {
+            const records = localStorage.getItem('workRecords') || '[]';
+            const blob = new Blob([records], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'backup_ساعات_العمل_' + new Date().toISOString().slice(0,10) + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+
+        window.importBackup = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if (!Array.isArray(data)) throw new Error('تنسيق غير صحيح');
+                        if (confirm(`سيتم استيراد ${data.length} سجل. هل تريد دمجها مع السجلات الحالية؟\n(اختر "إلغاء" للاستبدال الكامل)`)) {
+                            const existing = JSON.parse(localStorage.getItem('workRecords') || '[]');
+                            const merged = [...existing];
+                            data.forEach(r => {
+                                if (!merged.find(m => m.date === r.date)) merged.push(r);
+                            });
+                            localStorage.setItem('workRecords', JSON.stringify(merged));
+                        } else {
+                            localStorage.setItem('workRecords', JSON.stringify(data));
+                        }
+                        window.displayRecords();
+                        alert('✅ تم استيراد البيانات بنجاح');
+                    } catch(err) {
+                        alert('❌ ملف غير صالح: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        };
+        
+        window.showWeeklyReport = function() {
+            const records = JSON.parse(localStorage.getItem('workRecords') || '[]');
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            
+            const weekRecords = records.filter(function(r) {
+                return new Date(r.date) >= weekAgo;
+            });
+            
+            const reportDiv = document.getElementById('weeklyReport');
+            
+            if (weekRecords.length === 0) {
+                reportDiv.innerHTML = '<div class="empty-state"><h3>لا توجد سجلات للأسبوع الحالي</h3></div>';
+                return;
+            }
+            
+            let totalMinutes = 0;
+            let totalPeriods = 0;
+            let completeDays = 0;
+            let totalRequiredMinutes = 0; // إجمالي الدقائق المطلوبة بناءً على كل يوم
+            
+            for (let i = 0; i < weekRecords.length; i++) {
+                totalMinutes += weekRecords[i].totalMinutes;
+                if (weekRecords[i].periods) {
+                    totalPeriods += weekRecords[i].periods.length;
+                }
+                if (weekRecords[i].difference >= 0) {
+                    completeDays++;
+                }
+                // جمع الساعات المطلوبة لكل يوم
+                const reqHours = weekRecords[i].requiredHours || 8;
+                totalRequiredMinutes += reqHours * 60;
+            }
+            
+            const totalDays = weekRecords.length;
+            const avgMinutes = totalMinutes / totalDays;
+            const difference = totalMinutes - totalRequiredMinutes;
+            
+            reportDiv.innerHTML = 
+                '<div class="summary-cards">' +
+                '<div class="summary-card"><h3>عدد أيام العمل</h3><div class="value">' + totalDays + '</div></div>' +
+                '<div class="summary-card"><h3>إجمالي الفترات</h3><div class="value">' + totalPeriods + '</div></div>' +
+                '<div class="summary-card"><h3>إجمالي الساعات</h3><div class="value">' + window.formatMinutesToHours(totalMinutes) + '</div></div>' +
+                '<div class="summary-card"><h3>متوسط الساعات/يوم</h3><div class="value">' + window.formatMinutesToHours(Math.round(avgMinutes)) + '</div></div>' +
+                '<div class="summary-card"><h3>الأيام المكتملة</h3><div class="value">' + completeDays + '/' + totalDays + '</div></div>' +
+                '</div>' +
+                '<div class="result">' +
+                '<div class="result-item"><span>الساعات المطلوبة:</span><span><strong>' + window.formatMinutesToHours(totalRequiredMinutes) + '</strong></span></div>' +
+                '<div class="result-item"><span>الساعات الفعلية:</span><span><strong>' + window.formatMinutesToHours(totalMinutes) + '</strong></span></div>' +
+                '<div class="result-item"><span>الفرق:</span><span><strong style="color: ' + (difference >= 0 ? '#28a745' : '#dc3545') + '">' +
+                (difference >= 0 ? '+' : '') + window.formatMinutesToHours(Math.abs(difference)) + '</strong></span></div>' +
+                '</div>';
+        };
+        
+        window.showMonthlyReport = function() {
+            const selectedMonth = document.getElementById('monthSelect').value;
+            const records = JSON.parse(localStorage.getItem('workRecords') || '[]');
+            
+            const monthRecords = records.filter(function(r) {
+                return r.date.indexOf(selectedMonth) === 0;
+            });
+            
+            const reportDiv = document.getElementById('monthlyReport');
+            
+            if (monthRecords.length === 0) {
+                reportDiv.innerHTML = '<div class="empty-state"><h3>لا توجد سجلات لهذا الشهر</h3></div>';
+                return;
+            }
+            
+            let totalMinutes = 0;
+            let totalPeriods = 0;
+            let completeDays = 0;
+            let overtimeDays = 0;
+            let totalRequiredMinutes = 0; // إجمالي الدقائق المطلوبة بناءً على كل يوم
+            
+            for (let i = 0; i < monthRecords.length; i++) {
+                totalMinutes += monthRecords[i].totalMinutes;
+                if (monthRecords[i].periods) {
+                    totalPeriods += monthRecords[i].periods.length;
+                }
+                if (monthRecords[i].difference >= 0) {
+                    completeDays++;
+                }
+                if (monthRecords[i].difference > 0) {
+                    overtimeDays++;
+                }
+                // جمع الساعات المطلوبة لكل يوم
+                const reqHours = monthRecords[i].requiredHours || 8;
+                totalRequiredMinutes += reqHours * 60;
+            }
+            
+            const totalDays = monthRecords.length;
+            const avgMinutes = totalMinutes / totalDays;
+            const difference = totalMinutes - totalRequiredMinutes;
+            
+            const selectedDate = new Date(selectedMonth + '-01');
+            const monthName = selectedDate.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' });
+            
+            reportDiv.innerHTML = 
+                '<h3 style="text-align: center; margin: 20px 0; color: #667eea;">' + monthName + '</h3>' +
+                '<div class="summary-cards">' +
+                '<div class="summary-card"><h3>عدد أيام العمل</h3><div class="value">' + totalDays + '</div></div>' +
+                '<div class="summary-card"><h3>إجمالي الفترات</h3><div class="value">' + totalPeriods + '</div></div>' +
+                '<div class="summary-card"><h3>إجمالي الساعات</h3><div class="value">' + window.formatMinutesToHours(totalMinutes) + '</div></div>' +
+                '<div class="summary-card"><h3>متوسط الساعات/يوم</h3><div class="value">' + window.formatMinutesToHours(Math.round(avgMinutes)) + '</div></div>' +
+                '<div class="summary-card"><h3>الأيام المكتملة</h3><div class="value">' + completeDays + '</div></div>' +
+                '<div class="summary-card"><h3>أيام العمل الإضافي</h3><div class="value">' + overtimeDays + '</div></div>' +
+                '</div>' +
+                '<div class="result">' +
+                '<div class="result-item"><span>الساعات المطلوبة:</span><span><strong>' + window.formatMinutesToHours(totalRequiredMinutes) + '</strong></span></div>' +
+                '<div class="result-item"><span>الساعات الفعلية:</span><span><strong>' + window.formatMinutesToHours(totalMinutes) + '</strong></span></div>' +
+                '<div class="result-item"><span>الفرق:</span><span><strong style="color: ' + (difference >= 0 ? '#28a745' : '#dc3545') + '">' +
+                (difference >= 0 ? '+' : '') + window.formatMinutesToHours(Math.abs(difference)) + '</strong></span></div>' +
+                '</div>';
+        };
+        
+        // Dark mode functionality
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('modeIcon').textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', isDark);
+        }
+        
+        // Load saved preference
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dark mode
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('modeIcon').textContent = '☀️';
+            }
+            
+            // تعيين التاريخ الحالي
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('workDate').value = today;
+            document.getElementById('monthSelect').value = new Date().toISOString().slice(0, 7);
+            
+            // إضافة فترة واحدة افتراضية
+            window.addPeriod();
+            
+            // عرض السجلات
+            window.displayRecords();
+            
+            // عرض التقرير الأسبوعي
+            window.showWeeklyReport();
+            
+            // التحقق من وجود بيانات في URL (من Shortcuts)
+            const urlParams = new URLSearchParams(window.location.search);
+            const smsText = urlParams.get('sms');
+            
+            if (smsText) {
+                // فك التشفير وملء حقل الرسالة
+                const decodedText = decodeURIComponent(smsText);
+                document.getElementById('smsText').value = decodedText;
+                
+                // استخراج الوقت تلقائياً مع تأخير أطول للتأكد من تحميل كل شيء
+                setTimeout(function() {
+                    window.extractTimeFromSMS();
+                    // التمرير للأسفل لإظهار النتائج
+                    setTimeout(function() {
+                        const resultDiv = document.getElementById('extractResult');
+                        if (resultDiv && resultDiv.style.display !== 'none') {
+                            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }, 300);
+                }, 800);
+            }
+            
+            // PWA Install Prompt
+            window.showInstallPrompt = function() {
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+                
+                if (isIOS && !isInStandaloneMode) {
+                    const installDiv = document.createElement('div');
+                    installDiv.style.cssText = 'position: fixed; bottom: 20px; left: 20px; right: 20px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 10000; text-align: center; font-family: -apple-system, BlinkMacSystemFont, sans-serif;';
+                    installDiv.innerHTML = '<div style="font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #667eea;">📱 حوّل لتطبيق آيفون</div><div style="font-size: 14px; margin-bottom: 15px; color: #666; line-height: 1.6;">للحصول على تجربة أفضل:<br>1. اضغط على زر المشاركة 📤<br>2. اختر "إضافة للشاشة الرئيسية"<br>3. اضغط "إضافة" ✅</div><button onclick="this.parentElement.remove()" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 16px; cursor: pointer;">فهمت! 👍</button>';
+                    document.body.appendChild(installDiv);
+                    
+                    setTimeout(function() {
+                        installDiv.remove();
+                    }, 15000);
+                }
+            };
+            
+            // Show install prompt after 3 seconds
+            setTimeout(window.showInstallPrompt, 3000);
+        });
+    </script>
+</body>
+</html>
